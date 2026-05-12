@@ -1,7 +1,10 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <HelloWorld />
+  <nav class="bg-dark-blue text-white p-4">
+    <router-link to="/">Home</router-link> | 
+    <router-link to="/posts">Posts</router-link>
+  </nav>
+  <router-view />
 </template>
+
+<style scoped>
+</style>

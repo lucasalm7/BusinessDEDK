@@ -5,7 +5,7 @@ import axios from 'axios';
 const posts = ref([]);
 
 onMounted(async () => {
-  const response = await axios.get('http://businessdedk.local/wp-json/wp/v2/posts');
+  const response = await axios.get('http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/posts');
   posts.value = response.data;
 });
 </script>
