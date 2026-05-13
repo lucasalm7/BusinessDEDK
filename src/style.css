@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
-@import "tailwindcss/preflight";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
 @theme {
   --font-family-raleway: Raleway, sans-serif;
@@ -18,3 +17,13 @@
     @apply font-family-raleway;
   }
 }
+
+@layer components {
+  .navtext {
+    @apply text-black hover:text-blue transition font-normal text-base cursor-pointer;
+  }
+  .navdropdown {
+    @apply block px-4 py-3 hover:bg-semi-dark-blue hover:text-white border-b border-gray-50 font-normal text-base cursor-pointer;
+  }
+}
+
