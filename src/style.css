@@ -16,6 +16,36 @@
   html {
     @apply font-family-raleway;
   }
+
+  h1 {
+    /* Scales 24px -> 32px */
+    font-size: clamp(1.5rem, 5vw, 2rem); 
+    @apply font-bold leading-tight;
+  }
+  
+  h2 {
+    /* Scales 20px -> 24px */
+    font-size: clamp(1.25rem, 4vw, 1.5rem); 
+    @apply font-semibold;
+  }
+
+  h3 {
+    /* Scales 18px -> 20px (Your requested cap) */
+    font-size: clamp(1.125rem, 3vw, 1.25rem); 
+    @apply font-medium;
+  }
+
+  p {
+    /* Scales 14px -> 16px */
+    font-size: clamp(0.875rem, 2vw, 1rem); 
+    @apply font-normal leading-relaxed;
+  }
+
+  a {
+    /* Scales 12px -> 14px */
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem); 
+    @apply font-light;
+  }
 }
 
 @layer components {
@@ -24,6 +54,10 @@
   }
   .navdropdown {
     @apply block px-4 py-3 hover:bg-semi-dark-blue hover:text-white border-b border-gray-50 font-normal text-base cursor-pointer;
+  }
+  .texta {
+    font-size: clamp(0.875rem, 1.5vw, 1rem); 
+    @apply font-light;
   }
 }
 
