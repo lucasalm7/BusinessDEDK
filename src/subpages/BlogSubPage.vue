@@ -128,11 +128,11 @@ const fields = computed(() => article.value?.blogPostFields);
     </div>
 
     <!-- Related Articles -->
-    <div class="basegrid py-12 border-t border-gray-200">
-      <div class="col-span-12 mb-8">
+    <div class="basegrid py-12">
+      <div class="col-span-10 col-start-2 mb-8">
         <h2 class="text-dark-blue font-bold">Related articles</h2>
       </div>
-      <div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="col-span-10 col-start-2 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div v-for="related in allArticles" :key="related.slug" class="flex flex-col group cursor-pointer">
           <router-link :to="`/blog/${related.slug}`" class="overflow-hidden rounded-xl mb-4 relative">
             <img v-if="related.blogPostFields?.image?.node?.sourceUrl"
