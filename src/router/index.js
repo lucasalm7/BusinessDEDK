@@ -12,6 +12,7 @@ import Photogallery from './Photogallery.vue'
 import Resources from './Resources.vue'
 import MediaSubPage from '../subpages/MediaSubPage.vue'
 import NetworkSubPage from '../subpages/NetworkSubPage.vue';
+import BlogSubPage from '../subpages/BlogSubPage.vue'
 
 const routes = [
   {
@@ -59,6 +60,11 @@ const routes = [
     name: 'Blog',
     component: Blog
   },
+  {
+  path: '/blog/:slug',
+  name: 'BlogSubPage',
+  component: BlogSubPage
+},
   {
     path: '/photogallery',
     name: 'Photogallery',
