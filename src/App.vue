@@ -42,10 +42,6 @@ const cleanPhone = (phone) => phone.replace(/\s+/g, '');
 <template>
   <nav class="basegrid">
     
-<<<<<<< HEAD
-    <div class="col-span-2 flex items-center">
-      <img src="./assets/img/logo.png" alt="Business Region logo" class="w-auto object-contain block" style="max-width: 200px; max-height: 80px;" />
-=======
     <router-link to="/" class="col-span-2 md:col-span-2 flex items-center min-w-20">
       <img src="./assets/img/logo.png" alt="Business Region logo" class="w-auto object-contain block" />
     </router-link>
@@ -54,7 +50,6 @@ const cleanPhone = (phone) => phone.replace(/\s+/g, '');
       <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-xl">
         ☰
       </button>
->>>>>>> 99c23f2529ff7c9994b03fcc4ac62df037b8765e
     </div>
 
     <div class="hidden md:flex col-span-6 col-start-4 justify-between">
