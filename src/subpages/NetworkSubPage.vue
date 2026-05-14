@@ -97,8 +97,7 @@ const isInstitution = () => {
 
     <!-- Content -->
     <div v-else-if="card" class="bg-white">
-           <!-- Logo Box -->
-            <!-- Logo Box -->
+           
             <!-- Logo Box -->
       <div class="basegrid py-12">
         <div class="col-span-12">
@@ -121,74 +120,79 @@ const isInstitution = () => {
             </span>
           </div>
 
-          <p v-if="card.acf?.location" class="text-gray-600 text-sm flex items-center gap-2">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
-            </svg>
-            {{ card.acf?.location }}, Germany
+          <p v-if="card.acf?.location" class="text-primary text-sm flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <g fill="none" fill-rule="evenodd">
+              <path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
+              <path fill="#0D1B2A" d="M12 2a9 9 0 0 1 9 9c0 3.074-1.676 5.59-3.442 7.395a20.4 20.4 0 0 1-2.876 2.416l-.426.29l-.2.133l-.377.24l-.336.205l-.416.242a1.87 1.87 0 0 1-1.854 0l-.416-.242l-.52-.32l-.192-.125l-.41-.273a20.6 20.6 0 0 1-3.093-2.566C4.676 16.589 3 14.074 3 11a9 9 0 0 1 9-9m0 2a7 7 0 0 0-7 7c0 2.322 1.272 4.36 2.871 5.996a18 18 0 0 0 2.222 1.91l.458.326q.222.155.427.288l.39.25l.343.209l.289.169l.455-.269l.367-.23q.293-.186.627-.417l.458-.326a18 18 0 0 0 2.222-1.91C17.728 15.361 19 13.322 19 11a7 7 0 0 0-7-7m0 3a4 4 0 1 1 0 8a4 4 0 0 1 0-8m0 2a2 2 0 1 0 0 4a2 2 0 0 0 0-4"/>
+            </g>
+          </svg>
+            {{ card.acf?.location }}
           </p>
         </div>
       </div>
 
-      <!-- Main Content -->
+            <!-- Main Content -->
       <div class="basegrid py-12 gap-6 items-start">
         <!-- Left Column - About -->
-        <div class="col-span-12 md:col-span-7">
+        <div class="col-span-12 md:col-span-7 self-start">
           <div class="bg-white border border-gray-200 rounded-lg p-8">
-            <h3 class="text-lg font-bold text-black mb-6">About</h3>
-            <p v-if="card.acf?.about" class="text-gray-700 leading-relaxed text-sm">{{ card.acf?.about }}</p>
+            <h3 class="text-lg font-bold text-primary mb-6">About</h3>
+            <p v-if="card.acf?.about" class="text-primary leading-relaxed text-sm whitespace-pre-wrap">{{ card.acf?.about }}</p>
             <p v-else class="text-gray-500 text-sm">No description available.</p>
           </div>
         </div>
 
-        <!-- Right Column - Contact Info -->
-        <div class="col-span-12 md:col-span-5">
+                <!-- Right Column - Contact Info -->
+        <div class="col-span-12 md:col-span-5 self-start">
           <div class="bg-white border border-gray-200 rounded-lg p-8">
-            <h3 class="text-lg font-bold text-black mb-8">Contact Information</h3>
+            <h3 class="text-lg font-bold text-primary mb-8">Contact Information</h3>
             
             <div class="space-y-6">
               <!-- Email -->
-              <div v-if="card.acf?.email" class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path>
+              <div v-if="card.acf?.email" class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="mt-1 shrink-0">
+                  <path fill="#0d1b2a" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zm-2 0l-8 5-8-5zm0 12H4V8l8 5l8-5z"/>
                 </svg>
                 <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Email</p>
-                  <a :href="`mailto:${card.acf?.email}`" class="text-gray-900 hover:text-blue-600 transition-colors text-sm break-all">
+                  <p class="text-xs text-primary uppercase tracking-wider font-semibold mb-1">Email</p>
+                  <a :href="`mailto:${card.acf?.email}`" class="text-primary hover:text-blue transition-colors text-sm break-all">
                     {{ card.acf?.email }}
                   </a>
                 </div>
               </div>
 
               <!-- Phone -->
-              <div v-if="card.acf?.phone_number" class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17 10.5V7c0 .55-.45 1-1 1H4c-.55 0-1-.45-1-1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path>
+              <div v-if="card.acf?.phone_number" class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="mt-1 shrink-0">
+                  <path fill="#0d1b2a" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24c1.12.37 2.33.57 3.57.57c.55 0 1 .45 1 1V20c0 .55-.45 1-1 1c-9.39 0-17-7.61-17-17c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1c0 1.25.2 2.45.57 3.57c.11.35.03.74-.25 1.02z"/>
                 </svg>
                 <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Phone</p>
-                  <a :href="`tel:${card.acf?.phone_number}`" class="text-gray-900 hover:text-blue-600 transition-colors text-sm">
+                  <p class="text-xs text-primary uppercase tracking-wider font-semibold mb-1">Phone</p>
+                  <a :href="`tel:${card.acf?.phone_number}`" class="text-primary hover:text-blue transition-colors text-sm">
                     {{ card.acf?.phone_number }}
                   </a>
                 </div>
               </div>
 
               <!-- Website -->
-              <div v-if="card.acf?.website" class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-gray-600 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
-                </svg>
+              <div v-if="card.acf?.website" class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 14 14">
+	<path d="M0 0h14v14H0z" fill="none" />
+	<g fill="none" stroke="#0d1b2a" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M7 13.5a6.5 6.5 0 1 0 0-13a6.5 6.5 0 0 0 0 13M.5 7h13" />
+		<path d="M9.5 7A11.22 11.22 0 0 1 7 13.5A11.22 11.22 0 0 1 4.5 7A11.22 11.22 0 0 1 7 .5A11.22 11.22 0 0 1 9.5 7" />
+	</g>
+</svg>
+
                 <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">Website</p>
-                  <a :href="card.acf?.website" target="_blank" rel="noopener noreferrer" class="text-gray-900 hover:text-blue-600 transition-colors text-sm break-all">
+                  <p class="text-xs text-primary uppercase tracking-wider font-semibold mb-1">Website</p>
+                  <a :href="card.acf?.website" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-blue transition-colors text-sm break-all">
                     {{ card.acf?.website }}
                   </a>
                 </div>
               </div>
             </div>
-
-            <!-- Get in Touch Button -->
-            
           </div>
         </div>
       </div>
