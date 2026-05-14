@@ -1,10 +1,9 @@
-<script setup>
-import { ref } from 'vue'
+<script>
 
 </script>
-
 <template>
-
-  <testComponent/>
-
+  <div>
+    <h1 class="bold text">TEST TEXT</h1>
+  </div>
 </template>
+
