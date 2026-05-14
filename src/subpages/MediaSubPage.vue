@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { fetchVideoById, formatDate, shareOnLinkedIn, shareOnFacebook, shareOnInstagram, shareViaEmail } from '../utils/mediaFunctions.js';
+import { fetchVideoBySlug, formatDate, shareOnLinkedIn, shareOnFacebook, shareOnInstagram, shareViaEmail } from '../utils/mediaFunctions.js';
 
 const route = useRoute();
 const video = ref(null);
@@ -10,8 +10,8 @@ const error = ref(null);
 
 onMounted(async () => {
   try {
-    const videoId = route.params.id;
-    video.value = await fetchVideoById(videoId);
+    const slug = route.params.slug;
+    video.value = await fetchVideoBySlug(slug);
   } catch (err) {
     error.value = err.message;
   } finally {

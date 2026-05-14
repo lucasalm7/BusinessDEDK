@@ -12,12 +12,15 @@ export const fetchVideosFromAPI = async () => {
   }
 };
 
-export const fetchVideoById = async (videoId) => {
+export const fetchVideoBySlug = async (slug) => {
   try {
     const response = await axios.get(
-      `http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/video/${videoId}?acf_format=standard`
+      `http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/video?slug=${slug}&acf_format=standard`
     );
-    return response.data;
+    if (response.data.length > 0) {
+      return response.data[0];
+    }
+    throw new Error("Video not found");
   } catch (err) {
     throw new Error("Failed to load video: " + err.message);
   }

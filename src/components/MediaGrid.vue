@@ -97,7 +97,7 @@ const filteredVideos = computed(() => {
       <TransitionGroup name="fade" tag="div" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12 col-span-12">
         <div v-for="video in filteredVideos" :key="video.id" class="flex flex-col group cursor-pointer">
         
-        <router-link :to="`/video/${video.id}`" class="overflow-hidden rounded-xl mb-4">
+        <router-link :to="`/video/${video.slug}`" class="overflow-hidden rounded-xl mb-4">
           <img v-if="video.acf?.thumbnail_image?.url" :src="video.acf.thumbnail_image.url" :alt="video.acf.thumbnail_image.alt || video.title.rendered"
             class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"/>
         </router-link>

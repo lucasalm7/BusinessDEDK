@@ -73,7 +73,7 @@ const routes = [
   redirect: '/'
   },
   {
-  path: '/video/:id',
+  path: '/video/:slug',
   name: 'VideoDetail',
   component: MediaSubPage
 }
