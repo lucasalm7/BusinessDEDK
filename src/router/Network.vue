@@ -1,7 +1,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
+const router = useRouter()
 const cards = ref([])
 const loading = ref(true)
 const error = ref(null)
@@ -36,8 +38,20 @@ const normalize = (item) => {
   const classList = Array.isArray(item.class_list) ? item.class_list : []
   const isInstitution = classList.includes('company_type-institution') || (Array.isArray(companyType) && companyType.includes(33))
   const typeLabel = isInstitution ? 'Institution' : 'Company'
-  const sectorLabel = acf.sector || 'General'
-  const sectorSlug = slugify(sectorLabel)
+  
+  // Extract company types from class_list
+  let companyTypeLabels = []
+  classList.forEach(cls => {
+    if (cls.startsWith('company_type-') && cls !== 'company_type-company' && cls !== 'company_type-institution') {
+      const typeName = cls.replace('company_type-', '')
+      companyTypeLabels.push(formatLabel(typeName))
+    }
+  })
+  
+  if (companyTypeLabels.length === 0) {
+    companyTypeLabels = ['General']
+  }
+  
   return {
     id: item.id || item.databaseId || null,
     title,
@@ -47,13 +61,17 @@ const normalize = (item) => {
     companyType,
     location,
     typeLabel,
-    sectorLabel,
-    sectorSlug
+    companyTypeLabels,
   }
 }
 
 const sectors = computed(() => {
-  const unique = new Set(cards.value.map((card) => card.sectorSlug).filter(Boolean))
+  const unique = new Set()
+  cards.value.forEach(card => {
+    card.companyTypeLabels.forEach(label => {
+      unique.add(slugify(label))
+    })
+  })
   return ['all', ...Array.from(unique)]
 })
 
@@ -64,7 +82,7 @@ const filteredCards = computed(() => {
     const location = (card.location || '').toLowerCase()
     const bySearch = !query || title.includes(query) || location.includes(query)
     const byType = activeType.value === 'all' || (activeType.value === 'companies' && card.typeLabel === 'Company') || (activeType.value === 'institutions' && card.typeLabel === 'Institution')
-    const bySector = activeSector.value === 'all' || card.sectorSlug === activeSector.value
+    const bySector = activeSector.value === 'all' || card.companyTypeLabels.some(label => slugify(label) === activeSector.value)
     return bySearch && byType && bySector
   })
 })
@@ -110,283 +128,106 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="network-page">
-    <section class="hero">
-      <div class="container">
-        <h1>Network</h1>
-        <p>Connect with businesses, institutions, and experts across the DE-DK region.</p>
-      </div>
-    </section>
+  <!-- Hero Section -->
+  <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
+    <div class="col-span-12">
+      <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">
+        Network
+      </h1>
+    </div>
+    <div class="col-span-12 md:col-span-7">
+      <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
+        Connect with businesses, institutions, and experts across the DE-DK region.
+      </p>
+    </div>
+  </section>
 
-    <section class="controls container" v-if="!loading && !error">
-      <div class="search-wrap">
-        <span class="search-icon">⌕</span>
-        <input v-model="searchQuery" type="text" class="search-input" placeholder="Search by name, sector, location..." />
+  <!-- Controls Section -->
+  <div class="basegrid py-12">
+    <div class="col-span-12 mb-10" v-if="!loading && !error">
+      <!-- Search -->
+      <div class="relative max-w-sm mb-8">
+        <span class="absolute inset-y-0 left-3 flex items-center">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </span>
+        <input v-model="searchQuery" type="text" placeholder="Search by name, sector, location..." 
+          class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"/>
       </div>
 
-      <div class="type-filters">
-        <button class="type-pill" :class="{ active: activeType === 'all' }" @click="activeType = 'all'">All Types</button>
-        <button class="type-pill" :class="{ active: activeType === 'companies' }" @click="activeType = 'companies'">Companies</button>
-        <button class="type-pill" :class="{ active: activeType === 'institutions' }" @click="activeType = 'institutions'">Institutions</button>
+      <p class="text-gray-600 mb-4 text-sm font-medium">Filter by</p>
+
+      <!-- Type Filters -->
+      <div class="flex flex-wrap gap-4 items-center mb-6">
+        <button 
+          @click="activeType = 'all'"
+          :class="activeType === 'all' ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
+          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
+        >
+          All Types
+        </button>
+        <button 
+          @click="activeType = 'companies'"
+          :class="activeType === 'companies' ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
+          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
+        >
+          Companies
+        </button>
+        <button 
+          @click="activeType = 'institutions'"
+          :class="activeType === 'institutions' ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
+          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
+        >
+          Institutions
+        </button>
       </div>
 
-      <div class="sector-filters">
+      <!-- Sector Filters -->
+      <div class="flex flex-wrap gap-3">
         <button
           v-for="sector in sectors"
           :key="sector"
-          class="sector-pill"
-          :class="{ active: activeSector === sector }"
           @click="activeSector = sector"
+          :class="activeSector === sector ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
+          class="px-4 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
         >
           {{ sector === 'all' ? 'All Sectors' : formatLabel(sector) }}
         </button>
       </div>
-    </section>
+    </div>
 
-    <section class="container">
-      <div v-if="loading" class="state">Loading members...</div>
-      <div v-else-if="error" class="state error">Failed to load members: {{ error }}</div>
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 col-span-12">
+      <div v-if="loading" class="col-span-12 text-center py-20 text-gray-500">Loading members...</div>
+      <div v-else-if="error" class="col-span-12 text-center py-20 text-red-600">Failed to load members: {{ error }}</div>
 
-      <div v-else class="grid">
-        <article v-for="card in filteredCards" :key="card.id" class="business-card">
-          <div class="card-logo-wrap">
-            <img :src="card.logoUrl || 'https://via.placeholder.com/80'" :alt="card.title" class="logo" />
-          </div>
-
-          <div class="card-content">
-            <h3 v-html="card.title"></h3>
-            <p class="location">📍 {{ card.location || 'DE-DK Region' }}</p>
-            <div class="meta-badges">
-              <span class="badge">{{ card.sectorLabel }}</span>
-              <span class="badge">{{ card.typeLabel }}</span>
+      <template v-else>
+        <router-link 
+          v-for="card in filteredCards" 
+          :key="card.id" 
+          :to="`/network/${card.id}`"
+          class="flex flex-col border border-gray-200 rounded-lg p-4 bg-white cursor-pointer hover:shadow-lg hover:border-gray-300 transition-all"
+        >
+          <div class="flex gap-4 mb-3">
+            <div class="w-16 h-16 rounded-full border border-gray-300 shrink-0 flex items-center justify-center bg-white">
+              <img :src="card.logoUrl || 'https://via.placeholder.com/80'" :alt="card.title" class="w-full h-full object-contain rounded-full" />
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-bold text-black mb-1" v-html="card.title"></h3>
+              <p class="text-sm text-gray-600">{{ card.location || 'DE-DK Region' }}</p>
             </div>
           </div>
-        </article>
+          
+          <div class="flex gap-2 flex-wrap">
+            <span v-for="type in card.companyTypeLabels" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ type }}</span>
+            <span class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ card.typeLabel }}</span>
+          </div>
+        </router-link>
 
-        <p v-if="filteredCards.length === 0" class="state">No members found.</p>
-      </div>
-    </section>
+        <div v-if="filteredCards.length === 0" class="col-span-12 text-center py-20 text-gray-500">No members found.</div>
+      </template>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.network-page {
-  font-family: var(--font-family-raleway);
-  background: var(--color-soft-white);
-  min-height: 100vh;
-  color: var(--color-dark-blue);
-}
-
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 42px;
-}
-
-.hero {
-  background: var(--color-semi-dark-blue);
-  color: var(--color-soft-white);
-  padding: 82px 0 72px;
-}
-
-.hero h1 {
-  font-size: 52px;
-  line-height: 1.05;
-  margin: 0 0 18px;
-  font-weight: 700;
-}
-
-.hero p {
-  max-width: 640px;
-  font-size: 22px;
-  line-height: 1.35;
-  margin: 0;
-  font-weight: 600;
-}
-
-.controls {
-  padding-top: 28px;
-  padding-bottom: 16px;
-}
-
-.search-wrap {
-  position: relative;
-  width: 320px;
-}
-
-.search-icon {
-  position: absolute;
-  top: 50%;
-  left: 12px;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: var(--color-light-blue);
-}
-
-.search-input {
-  width: 100%;
-  height: 42px;
-  border-radius: 10px;
-  border: 1px solid var(--color-stroke);
-  background: var(--color-soft-white);
-  padding: 0 14px 0 34px;
-  font-size: 14px;
-  color: var(--color-dark-blue);
-}
-
-.type-filters {
-  margin-top: 20px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
-  gap: 12px;
-}
-
-.type-pill,
-.sector-pill {
-  height: 38px;
-  border-radius: 10px;
-  border: 1px solid var(--color-stroke);
-  background: var(--color-soft-white);
-  color: var(--color-semi-dark-blue);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.type-pill.active,
-.sector-pill.active {
-  background: var(--color-semi-dark-blue);
-  color: var(--color-soft-white);
-  border-color: var(--color-semi-dark-blue);
-}
-
-.sector-filters {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.sector-pill {
-  padding: 0 16px;
-  height: 34px;
-  border-radius: 9px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(220px, 1fr));
-  gap: 18px 22px;
-  padding: 28px 42px 56px;
-}
-
-.business-card {
-  min-height: 138px;
-  background: var(--color-soft-white);
-  border: 1px solid var(--color-stroke);
-  border-radius: 10px;
-  display: grid;
-  grid-template-columns: 84px 1fr;
-  gap: 14px;
-  align-items: center;
-  padding: 20px;
-}
-
-.card-logo-wrap {
-  width: 78px;
-  height: 78px;
-  border: 1px solid var(--color-stroke);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px; /* keep image inset so its background doesn't overlap the ring */
-  box-sizing: border-box;
-  background: var(--color-soft-white);
-}
-
-.logo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  border-radius: 50%;
-}
-
-.card-content h3 {
-  margin: 0;
-  font-size: 22px;
-  line-height: 1.2;
-  color: var(--color-dark-blue);
-  font-weight: 700;
-}
-
-.location {
-  margin: 8px 0 10px;
-  font-size: 13px;
-  color: var(--color-blue);
-}
-
-.meta-badges {
-  display: flex;
-  gap: 8px;
-}
-
-.badge {
-  height: 22px;
-  border: 1px solid var(--color-stroke);
-  border-radius: 7px;
-  background: var(--color-soft-white);
-  color: var(--color-semi-dark-blue);
-  font-size: 11px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-}
-
-.state {
-  padding: 34px 42px;
-  color: var(--color-blue);
-}
-
-.state.error {
-  color: #b03232;
-}
-
-@media (max-width: 1100px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
-  }
-}
-
-@media (max-width: 760px) {
-  .container {
-    padding: 0 18px;
-  }
-
-  .hero {
-    padding: 52px 0 42px;
-  }
-
-  .hero h1 {
-    font-size: 40px;
-  }
-
-  .hero p {
-    font-size: 18px;
-  }
-
-  .search-wrap {
-    width: 100%;
-  }
-
-  .type-filters {
-    grid-template-columns: 1fr;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-    padding: 24px 18px 40px;
-  }
-}
-</style>

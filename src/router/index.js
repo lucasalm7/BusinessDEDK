@@ -10,7 +10,8 @@ import BorderRegion from './BorderRegion.vue'
 import Blog from './Blog.vue'
 import Photogallery from './Photogallery.vue'
 import Resources from './Resources.vue'
-import MediaSubPage from '../subpages/MediaSubPage.vue';
+import MediaSubPage from '../subpages/MediaSubPage.vue'
+import NetworkSubPage from '../subpages/NetworkSubPage.vue';
 
 const routes = [
   {
@@ -76,6 +77,11 @@ const routes = [
   path: '/video/:slug',
   name: 'VideoDetail',
   component: MediaSubPage
+},
+{
+  path: '/network/:id',
+  name: 'NetworkDetail',
+  component: NetworkSubPage
 }
 ]
 
