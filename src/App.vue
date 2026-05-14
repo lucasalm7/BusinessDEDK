@@ -8,7 +8,7 @@ const isDropdownOpen = ref(false)
   <nav class="grid grid-cols-12 gap-8 items-center py-6 px-8 bg-white pl-[5%] pr-[5%]">
     
     <div class="col-span-2 flex items-center">
-      <img src="./assets/img/logo.png" alt="Business Region logo" class=" w-auto object-contain block" />
+      <img src="./assets/img/logo.png" alt="Business Region logo" class="w-auto object-contain block" style="max-width: 200px; max-height: 80px;" />
     </div>
 
     <div class="col-span-6 col-start-4 flex justify-between">
