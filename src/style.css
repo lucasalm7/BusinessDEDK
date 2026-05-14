@@ -59,5 +59,11 @@
     font-size: clamp(0.875rem, 1.5vw, 1rem); 
     @apply font-light;
   }
+  .basegrid {
+    @apply grid grid-cols-12 gap-4 md:gap-8 items-center py-4 md:py-6 px-4 md:px-8 bg-white md:pl-[5%] md:pr-[5%];
+  }
+  .basegrid-footer {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 lg:gap-8 py-4 md:py-6 px-4 md:px-8 bg-semi-dark-blue text-white md:pl-[5%] md:pr-[5%];
+}
 }
 

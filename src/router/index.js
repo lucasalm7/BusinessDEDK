@@ -66,6 +66,10 @@ const routes = [
     path: '/resources',
     name: 'Resources',
     component: Resources
+  },
+  {
+  path: '/home',
+  redirect: '/'
   }
 ]
 
