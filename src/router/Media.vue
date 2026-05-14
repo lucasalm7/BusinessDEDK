@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import MediaGrid from '../components/MediaGrid.vue';
 
 const videos = ref([]);
 const error = ref(null);
@@ -21,44 +22,20 @@ onMounted(async () => {
 
 <template>
 
-    <section class="bg-dark-blue py-20 px-8 md:pl-[5%] md:pr-[5%]">
-      <div class="max-w-4xl">
-        <h1 class="text-white text-5xl md:text-6xl font-bold mb-6 tracking-tight">
-          Media
-        </h1>
-        
-        <p class="text-white text-lg md:text-2xl font-medium leading-relaxed max-w-2xl opacity-90">
-          Watch inspiring stories, expert interviews, and 
-          success cases from our cross-border community.
-        </p>
-      </div>
-    </section>
-
-  <div class="basegrid">
-
-    <div class="video-grid">
-      <div v-for="video in videos" :key="video.id" class="card">
-        <img 
-        v-if="video.acf?.thumbnail_image?.url"
-        :src="video.acf.thumbnail_image.url" 
-        :alt="video.acf.thumbnail_image.alt || video.title.rendered"
-        class="thumbnail"
-        />
-
-        <div class="card-body">
-          <h3 v-html="video.title.rendered"></h3>
-
-          <p v-if="video.acf?.video_short_description">
-            {{ video.acf.video_short_description }}
-          </p>
-
-          <router-link :to="`/video/${video.id}`" class="button">
-            Watch Video
-          </router-link>
-        </div>
-      </div>
+  <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
+    <div class="col-span-12">
+      <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">
+        Cross-Border Business Media
+      </h1>
     </div>
 
-  </div>
+    <div class="col-span-12 md:col-span-7">
+      <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
+        Watch expert interviews, cross-border business insights, recruitment stories, and Denmark-Germany success cases.
+      </p>
+    </div>
+  </section>
+
+  <media-grid :videos="videos" />
   
 </template>

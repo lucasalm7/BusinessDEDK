@@ -10,6 +10,7 @@ import BorderRegion from './BorderRegion.vue'
 import Blog from './Blog.vue'
 import Photogallery from './Photogallery.vue'
 import Resources from './Resources.vue'
+import MediaSubPage from '../subpages/MediaSubPage.vue';
 
 const routes = [
   {
@@ -70,7 +71,12 @@ const routes = [
   {
   path: '/home',
   redirect: '/'
-  }
+  },
+  {
+  path: '/video/:id',
+  name: 'VideoDetail',
+  component: MediaSubPage
+}
 ]
 
 
