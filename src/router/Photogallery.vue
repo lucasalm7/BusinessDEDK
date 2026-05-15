@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 
 const events = ref([]);
@@ -18,9 +18,19 @@ const QUERY = `
         date
         description
         coverimg {
-          node {
-            sourceUrl
-          }
+          node { sourceUrl }
+        }
+        image2 {
+          node { sourceUrl }
+        }
+        image3 {
+          node { sourceUrl }
+        }
+        image4 {
+          node { sourceUrl }
+        }
+        image5 {
+          node { sourceUrl }
         }
       }
     }
@@ -39,13 +49,40 @@ onMounted(async () => {
   }
 });
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+const getEventImages = (event) => {
+  const fields = event.galleryEventFields;
+  return [
+    fields?.coverimg?.node?.sourceUrl,
+    fields?.image2?.node?.sourceUrl,
+    fields?.image3?.node?.sourceUrl,
+    fields?.image4?.node?.sourceUrl,
+    fields?.image5?.node?.sourceUrl,
+  ].filter(Boolean);
 };
+
+const selectedImages = computed(() => {
+  if (!selectedEvent.value) return [];
+  return getEventImages(selectedEvent.value);
+});
+
+const currentImageIndex = ref(0);
 
 const openPopup = (event) => {
   selectedEvent.value = event;
+  currentImageIndex.value = 0;
+};
+
+const nextImage = () => {
+  currentImageIndex.value = (currentImageIndex.value + 1) % selectedImages.value.length;
+};
+
+const prevImage = () => {
+  currentImageIndex.value = (currentImageIndex.value - 1 + selectedImages.value.length) % selectedImages.value.length;
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
 };
 
 const closePopup = () => {
@@ -67,7 +104,7 @@ const prevEvent = () => {
   <!-- Hero Banner -->
   <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
     <div class="col-span-12">
-      <h1 class="text-white mb-4 md:mb-6">Gallery</h1>
+      <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">Gallery</h1>
     </div>
     <div class="col-span-12 md:col-span-8">
       <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
@@ -92,7 +129,7 @@ const prevEvent = () => {
             :src="event.galleryEventFields.coverimg.node.sourceUrl"
             :alt="event.title"
             class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"/>
-          <span class="absolute top-3 right-3 bg-dark-blue text-white text-xs px-3 py-1 rounded-full">
+          <span class="absolute top-3 right-3 bg-dark-blue text-white text-sm px-4 py-1.5 rounded-md">
             {{ formatDate(event.galleryEventFields?.date) }}
           </span>
         </div>
@@ -103,51 +140,50 @@ const prevEvent = () => {
     </div>
   </div>
 
-  <!-- Popup / Lightbox -->
-  <div v-if="selectedEvent" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center px-4"
-    @click.self="closePopup">
+<!-- Popup / Lightbox -->
+<div v-if="selectedEvent" 
+  class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center px-4"
+  @click.self="closePopup">
 
-    <div class="relative bg-white rounded-2xl overflow-hidden max-w-3xl w-full">
+  <div class="relative bg-white rounded-2xl overflow-hidden max-w-3xl w-full">
 
-      <!-- Close button -->
-      <button @click="closePopup"
-        class="absolute top-4 right-4 bg-dark-blue text-white w-8 h-8 rounded-full flex items-center justify-center z-10 hover:bg-blue transition-colors">
-        ✕
+    <!-- Close button -->
+    <button @click="closePopup"
+      class="absolute top-4 right-4 bg-dark-blue text-white w-8 h-8 rounded-md flex items-center justify-center z-10 hover:bg-blue transition-colors">
+      ✕
+    </button>
+
+    <!-- Main Image -->
+    <div class="relative">
+      <img :src="selectedImages[currentImageIndex]"
+        :alt="selectedEvent.title"
+        class="w-full h-80 object-cover"/>
+
+      <!-- Prev / Next -->
+      <button @click="prevImage"
+        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 w-10 h-10 rounded-md flex items-center justify-center shadow transition-all text-xl">
+        ‹
+      </button>
+      <button @click="nextImage"
+        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 w-10 h-10 rounded-md flex items-center justify-center shadow transition-all text-xl">
+        ›
       </button>
 
-      <!-- Image -->
-      <div class="relative">
-        <img v-if="selectedEvent.galleryEventFields?.coverimg?.node?.sourceUrl"
-          :src="selectedEvent.galleryEventFields.coverimg.node.sourceUrl"
-          :alt="selectedEvent.title"
-          class="w-full h-80 object-cover"/>
-
-        <!-- Prev / Next -->
-        <button @click="prevEvent"
-          class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 w-10 h-10 rounded-full flex items-center justify-center shadow transition-all">
-          ‹
-        </button>
-        <button @click="nextEvent"
-          class="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 w-10 h-10 rounded-full flex items-center justify-center shadow transition-all">
-          ›
-        </button>
-
-        <!-- Caption -->
-        <div class="absolute bottom-0 left-0 right-0 bg-dark-blue bg-opacity-80 text-white text-sm px-6 py-3">
-          {{ selectedEvent.title }} — {{ formatDate(selectedEvent.galleryEventFields?.date) }}
-        </div>
-      </div>
-
-      <!-- Thumbnails -->
-      <div class="flex gap-2 p-4 overflow-x-auto">
-        <img v-for="ev in events" :key="ev.slug"
-          :src="ev.galleryEventFields?.coverimg?.node?.sourceUrl"
-          :alt="ev.title"
-          @click="selectedEvent = ev"
-          :class="selectedEvent.slug === ev.slug ? 'ring-2 ring-dark-blue' : 'opacity-60'"
-          class="w-16 h-12 object-cover rounded-lg cursor-pointer hover:opacity-100 transition-opacity shrink-0"/>
+      <!-- Caption -->
+      <div class="absolute bottom-0 left-0 right-0 bg-dark-blue bg-opacity-80 text-white text-sm px-6 py-3">
+        {{ selectedEvent.title }} — {{ formatDate(selectedEvent.galleryEventFields?.date) }}
       </div>
     </div>
+
+    <!-- Thumbnails -->
+    <div class="flex gap-2 p-4 overflow-x-auto">
+      <img v-for="(img, index) in selectedImages" :key="index"
+        :src="img"
+        @click="currentImageIndex = index"
+        :class="currentImageIndex === index ? 'ring-2 ring-dark-blue opacity-100' : 'opacity-60'"
+        class="w-16 h-12 object-cover rounded-lg cursor-pointer hover:opacity-100 transition-opacity shrink-0"/>
+    </div>
   </div>
+</div>
 
   </template>
