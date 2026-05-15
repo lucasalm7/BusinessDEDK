@@ -1,11 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, provide, watch } from 'vue';
 import axios from 'axios';
 
 const isDropdownOpen = ref(false)
 const isMobileMenuOpen = ref(false)
 const isLanguageDropdownOpen = ref(false)
-const currentLanguage = ref('EN')
 const isSearchOpen = ref(false)
 const searchQuery = ref('')
 
@@ -36,6 +35,21 @@ onMounted(async () => {
 });
 
 const cleanPhone = (phone) => phone.replace(/\s+/g, '');
+
+const currentLanguage = ref('English');
+
+provide('siteLanguage', currentLanguage);
+
+const languageMap = {
+  'EN': 'English',
+  'DA': 'Danish',
+  'DE': 'German'
+};
+
+const setLanguage = (langCode) => {
+  currentLanguage.value = languageMap[langCode];
+  isLanguageDropdownOpen.value = false;
+};
 
 </script>
 
@@ -106,12 +120,12 @@ const cleanPhone = (phone) => phone.replace(/\s+/g, '');
 
     <div class="hidden md:flex col-start-12 justify-center items-center text-black relative">
       <button @click="isLanguageDropdownOpen = !isLanguageDropdownOpen" class="font-medium hover:text-blue-900 flex items-center cursor-pointer">
-        {{ currentLanguage }} <span class="ml-1 text-xs">▼</span>
+        {{ Object.keys(languageMap).find(key => languageMap[key] === currentLanguage) }} <span class="ml-1 text-xs">▼</span>
       </button>
       <div v-if="isLanguageDropdownOpen" class="absolute top-full mt-2 w-24 bg-white border border-gray-100 shadow-xl rounded-md z-50">
-        <button @click="currentLanguage = 'EN'; isLanguageDropdownOpen = false" class="navdropdown w-full text-left">English</button>
-        <button @click="currentLanguage = 'DA'; isLanguageDropdownOpen = false" class="navdropdown w-full text-left">Dansk</button>
-        <button @click="currentLanguage = 'DE'; isLanguageDropdownOpen = false" class="navdropdown w-full text-left">Deutsch</button>
+        <button @click="setLanguage('EN')" class="navdropdown w-full text-left">English</button>
+        <button @click="setLanguage('DA')" class="navdropdown w-full text-left">Dansk</button>
+        <button @click="setLanguage('DE')" class="navdropdown w-full text-left">Deutsch</button>
       </div>
     </div>
 
@@ -135,10 +149,12 @@ const cleanPhone = (phone) => phone.replace(/\s+/g, '');
     <div v-if="isMobileMenuOpen" class="col-span-12 md:hidden bg-white border-t border-gray-100 py-4">
       <div class="flex flex-col gap-3">
         <div class="px-4 py-2">
-          <p class="text-sm font-medium mb-2">Language:</p>
-          <button @click="currentLanguage = 'EN'" class="block w-full text-left px-4 py-1 hover:text-blue-900">English</button>
-          <button @click="currentLanguage = 'DA'" class="block w-full text-left px-4 py-1 hover:text-blue-900">Dansk</button>
-          <button @click="currentLanguage = 'DE'" class="block w-full text-left px-4 py-1 hover:text-blue-900">Deutsch</button>
+          <p class="text-sm font-medium mb-2">
+            Language: {{ Object.keys(languageMap).find(key => languageMap[key] === currentLanguage) }}
+          </p>
+          <button @click="setLanguage('EN')" class="block w-full text-left px-4 py-1 hover:text-blue-900">English</button>
+          <button @click="setLanguage('DA')" class="block w-full text-left px-4 py-1 hover:text-blue-900">Dansk</button>
+          <button @click="setLanguage('DE')" class="block w-full text-left px-4 py-1 hover:text-blue-900">Deutsch</button>
         </div>
       </div>
     </div>

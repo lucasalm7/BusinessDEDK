@@ -1,8 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import axios from 'axios';
 import MediaGrid from '../components/MediaGrid.vue';
+import { getTranslatedContent, getLabel } from '../utils/translationFunction.js';
 
+const siteLanguage = inject('siteLanguage');
+const lbl = (key) => getLabel(key, siteLanguage.value);
 const videos = ref([]);
 const error = ref(null);
 const loading = ref(true);
@@ -25,13 +28,13 @@ onMounted(async () => {
   <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
     <div class="col-span-12">
       <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">
-        Cross-Border Business Media
+        {{lbl('mediaTitle')}}
       </h1>
     </div>
 
     <div class="col-span-12 md:col-span-8">
       <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
-        Watch expert interviews, cross-border business insights, recruitment stories, and Denmark-Germany success cases.
+        {{lbl('mediaDescription')}}
       </p>
     </div>
   </section>

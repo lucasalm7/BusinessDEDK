@@ -1,19 +1,26 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, inject } from 'vue';
+import { fetchVideoById, formatDate, shareOnLinkedIn, shareOnFacebook, shareOnInstagram, shareViaEmail } from '../utils/mediaFunctions.js';
 import { useRoute } from 'vue-router';
-import { fetchVideoBySlug, formatDate, shareOnLinkedIn, shareOnFacebook, shareOnInstagram, shareViaEmail } from '../utils/mediaFunctions.js';
+import { getTranslatedContent, getLabel } from '../utils/translationFunction.js';
 
 const route = useRoute();
+const siteLanguage = inject('siteLanguage');
 const video = ref(null);
 const loading = ref(true);
 const error = ref(null);
 
+const lbl = (key) => getLabel(key, siteLanguage.value);
+const t = (item, field) => getTranslatedContent(item, field, siteLanguage.value);
+
 onMounted(async () => {
   try {
-    const slug = route.params.slug;
-    video.value = await fetchVideoBySlug(slug);
+    // Look for 'slug' in the URL (which will actually be the ID now)
+    const videoId = route.params.slug; 
+    video.value = await fetchVideoById(videoId);
   } catch (err) {
-    error.value = err.message;
+    console.error(err);
+    error.value = "Could not load video.";
   } finally {
     loading.value = false;
   }
@@ -29,14 +36,14 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
 </script>
 
 <template>
-  <div v-if="loading" class="text-center py-20">Loading...</div>
+  <div v-if="loading" class="text-center py-20">{{ lbl('loading') }}</div>
   <div v-else-if="error" class="text-red-500 text-center py-20">{{ error }}</div>
   
   <div v-else class="min-h-screen bg-white">
     <div class="bg-semi-dark-blue py-4 px-[5%]">
       <router-link to="/media" class="text-white flex items-center gap-2 hover:opacity-80 transition-opacity">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        Back to Media
+        {{ lbl('backToMedia') }}
       </router-link>
     </div>
 
@@ -70,9 +77,9 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
 
       <!-- Right Column: Share Sidebar -->
       <div class="lg:col-span-4 border-t lg:border-t-0 pt-8 lg:pt-0">
-        <h3 class="font-bold text-black mb-4">Share this video</h3>
+        <h3 class="font-bold text-black mb-4">{{ lbl('shareTitle') }}</h3>
         <p class="text-sm text-gray-600 mb-6 leading-relaxed">
-          Found this article helpful or interesting? Spread the word by sharing it on your social media or email.
+          {{ lbl('shareDescription') }}
         </p>
         
         <div class="flex gap-4">
@@ -96,6 +103,20 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
 </template>
 
 <style scoped>
-/* Ensure the iframe/video fills the rounded container */
+.video-container :deep(iframe),
+.video-container :deep(object),
+.video-container :deep(embed) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* This maintains the 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+}
 </style>
