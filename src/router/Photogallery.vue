@@ -6,6 +6,27 @@ const events = ref([]);
 const loading = ref(true);
 const selectedEvent = ref(null);
 
+const selectedType = ref('All');
+const selectedCountry = ref('All');
+const dateFrom = ref('');
+const dateTo = ref('');
+const activeDropdown = ref(null);
+
+const toggleDropdown = (name) => {
+  activeDropdown.value = activeDropdown.value === name ? null : name;
+};
+
+const filteredEvents = computed(() => {
+  return events.value.filter(e => {
+    const matchesType = selectedType.value === 'All' || e.galleryEventFields?.type === selectedType.value;
+    const matchesCountry = selectedCountry.value === 'All';
+    const eventDate = new Date(e.galleryEventFields?.date);
+    const matchesFrom = !dateFrom.value || eventDate >= new Date(dateFrom.value);
+    const matchesTo = !dateTo.value || eventDate <= new Date(dateTo.value);
+    return matchesType && matchesCountry && matchesFrom && matchesTo;
+  });
+});
+
 const GRAPHQL_URL = 'http://businessdedk.lucasalmeida.dk/graphql';
 
 const QUERY = `
@@ -113,6 +134,61 @@ const prevEvent = () => {
     </div>
   </section>
 
+  <!-- Filters -->
+<div class="basegrid py-6">
+  <div class="col-span-12">
+    <p class="text-gray-600 mb-4 text-sm font-medium">Filter by</p>
+    <div class="flex flex-wrap gap-4 items-center">
+
+      <button @click="selectedType = 'All'; selectedCountry = 'All'; dateFrom = ''; dateTo = ''"
+        :class="selectedType === 'All' ? 'bg-slate-900 text-white' : 'bg-white border text-gray-700'"
+        class="px-6 py-2 rounded-xl transition-all text-sm">
+        All events
+      </button>
+
+      <!-- Country -->
+      <div class="relative">
+        <button @click="toggleDropdown('country')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
+          Country <span class="font-light">{{ selectedCountry !== 'All' ? ': ' + selectedCountry : '▼' }}</span>
+        </button>
+        <div v-if="activeDropdown === 'country'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
+          <button @click="selectedCountry = 'All'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">All</button>
+          <button @click="selectedCountry = 'Denmark'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Denmark</button>
+          <button @click="selectedCountry = 'Germany'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Germany</button>
+        </div>
+      </div>
+
+      <!-- Type -->
+      <div class="relative">
+        <button @click="toggleDropdown('type')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
+          Type <span class="font-light">{{ selectedType !== 'All' ? ': ' + selectedType : '▼' }}</span>
+        </button>
+        <div v-if="activeDropdown === 'type'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
+          <button @click="selectedType = 'All'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">All</button>
+          <button @click="selectedType = 'Gathering'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Gathering</button>
+          <button @click="selectedType = 'Forum'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Forum</button>
+          <button @click="selectedType = 'Breakfast'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Breakfast</button>
+          <button @click="selectedType = 'Job Fair'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Job Fair</button>
+        </div>
+      </div>
+
+      <!-- Date range -->
+      <div class="relative">
+        <button @click="toggleDropdown('date')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
+          Date range <span class="font-light">▼</span>
+        </button>
+        <div v-if="activeDropdown === 'date'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 p-4 w-64">
+          <p class="text-gray-500 text-xs mb-1">From</p>
+          <input type="date" v-model="dateFrom" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          <p class="text-gray-500 text-xs mb-1">To</p>
+          <input type="date" v-model="dateTo" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
   <!-- Gallery Grid -->
   <div class="basegrid py-12">
     <div v-if="loading" class="col-span-12 text-center py-20 text-gray-500">
@@ -120,7 +196,7 @@ const prevEvent = () => {
     </div>
 
     <div v-else class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div v-for="event in events" :key="event.slug"
+      <div v-for="event in filteredEvents" :key="event.slug"
         class="flex flex-col group cursor-pointer"
         @click="openPopup(event)">
 
