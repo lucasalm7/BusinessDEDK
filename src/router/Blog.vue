@@ -73,7 +73,7 @@ const formatDate = (dateStr) => {
   <!-- Hero Banner -->
   <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
     <div class="col-span-12">
-      <h1 class="text-white mb-4 md:mb-6">Blog</h1>
+      <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">Blog</h1>
     </div>
     <div class="col-span-12 md:col-span-8">
       <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
@@ -141,7 +141,7 @@ const formatDate = (dateStr) => {
             :src="article.blogPostFields.image.node.sourceUrl"
             :alt="article.title"
             class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"/>
-          <span class="absolute top-3 right-3 bg-dark-blue text-white text-xs px-3 py-1 rounded-full">
+          <span class="absolute top-3 right-3 bg-dark-blue text-white text-sm px-4 py-1.5 rounded-md">
             {{ article.blogPostFields?.category }}
           </span>
         </router-link>
