@@ -8,6 +8,9 @@ const error = ref(null);
 const searchQuery = ref('');
 const selectedTopic = ref('All');
 const activeDropdown = ref(null);
+const selectedCountry = ref('All');
+const selectedAudience = ref('All');
+const selectedDate = ref('All');
 
 const GRAPHQL_URL = 'http://businessdedk.lucasalmeida.dk/graphql';
 
@@ -73,7 +76,7 @@ const formatDate = (dateStr) => {
   <!-- Hero Banner -->
   <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
     <div class="col-span-12">
-      <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">Blog</h1>
+      <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">Cross-Border Business Blog</h1>
     </div>
     <div class="col-span-12 md:col-span-8">
       <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
@@ -99,27 +102,64 @@ const formatDate = (dateStr) => {
 
       <!-- Filter buttons -->
       <p class="text-gray-600 mb-4 text-sm font-medium">Filter by</p>
-      <div class="flex flex-wrap gap-4 items-center">
-        <button @click="selectedTopic = 'All'"
-          :class="selectedTopic === 'All' ? 'bg-slate-900 text-white' : 'bg-white border text-gray-700'"
-          class="px-6 py-2 rounded-xl transition-all text-sm">
-          All articles
-        </button>
+<div class="flex flex-wrap gap-4 items-center">
+  <button @click="selectedTopic = 'All'; selectedAudience = 'All'; selectedCountry = 'All'"
+    :class="selectedTopic === 'All' ? 'bg-slate-900 text-white' : 'bg-white border text-gray-700'"
+    class="px-6 py-2 rounded-xl transition-all text-sm">
+    All articles
+  </button>
 
-        <!-- Topic dropdown -->
-        <div class="relative">
-          <button @click="toggleDropdown('topic')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Topic <span class="text-sm font-light">{{ selectedTopic !== 'All' ? ': ' + selectedTopic : '▼' }}</span>
-          </button>
-          <div v-if="activeDropdown === 'topic'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
-            <button v-for="topic in topics" :key="topic"
-              @click="selectedTopic = topic; activeDropdown = null"
-              class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-              {{ topic }}
-            </button>
-          </div>
-        </div>
-      </div>
+  <!-- Topic dropdown -->
+  <div class="relative">
+    <button @click="toggleDropdown('topic')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
+      Topic <span class="text-sm font-light">{{ selectedTopic !== 'All' ? ': ' + selectedTopic : '▼' }}</span>
+    </button>
+    <div v-if="activeDropdown === 'topic'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
+      <button v-for="topic in topics" :key="topic"
+        @click="selectedTopic = topic; activeDropdown = null"
+        class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+        {{ topic }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Country dropdown -->
+  <div class="relative">
+    <button @click="toggleDropdown('country')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
+      Country <span class="text-sm font-light">{{ selectedCountry !== 'All' ? ': ' + selectedCountry : '▼' }}</span>
+    </button>
+    <div v-if="activeDropdown === 'country'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
+      <button @click="selectedCountry = 'All'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">All</button>
+      <button @click="selectedCountry = 'Denmark'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Denmark</button>
+      <button @click="selectedCountry = 'Germany'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Germany</button>
+    </div>
+  </div>
+
+  <!-- Audience dropdown -->
+  <div class="relative">
+    <button @click="toggleDropdown('audience')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
+      Audience <span class="text-sm font-light">{{ selectedAudience !== 'All' ? ': ' + selectedAudience : '▼' }}</span>
+    </button>
+    <div v-if="activeDropdown === 'audience'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
+      <button @click="selectedAudience = 'All'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">All</button>
+      <button @click="selectedAudience = 'Businesses'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Businesses</button>
+      <button @click="selectedAudience = 'Freelancers'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Freelancers</button>
+      <button @click="selectedAudience = 'Startups'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">Startups</button>
+    </div>
+  </div>
+
+  <!-- Date range dropdown -->
+  <div class="relative">
+    <button @click="toggleDropdown('date')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
+      Date range <span class="text-sm font-light">{{ selectedDate !== 'All' ? ': ' + selectedDate : '▼' }}</span>
+    </button>
+    <div v-if="activeDropdown === 'date'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
+      <button @click="selectedDate = 'All'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">All</button>
+      <button @click="selectedDate = '2026'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">2026</button>
+      <button @click="selectedDate = '2025'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">2025</button>
+    </div>
+  </div>
+</div>
     </div>
 
     <!-- Loading -->
