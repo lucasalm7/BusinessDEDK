@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, provide, watch } from 'vue';
 import axios from 'axios';
+import { getTranslatedContent, getLabel } from './utils/translationFunction.js';
 
 const isDropdownOpen = ref(false)
 const isMobileMenuOpen = ref(false)
@@ -19,15 +20,7 @@ onMounted(async () => {
     const response = await axios.get('http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/pages/74?acf_format=standard');
     
     if (response.data.acf) {
-      footerData.value = {
-        address: response.data.acf.footer_address,
-        phone: response.data.acf.footer_phone,
-        email: response.data.acf.footer_email,
-        calling_hours_week_days: response.data.acf.calling_hours_week_days,
-        calling_hours: response.data.acf.calling_hours,
-        calling_hours_week_days_two: response.data.acf.calling_hours_week_days_two,
-        calling_hours_two: response.data.acf.calling_hours_two
-      };
+      footerData.value = response.data.acf;  // Store everything
     }
   } catch (error) {
     console.error("Error fetching footer data:", error);
@@ -40,6 +33,17 @@ const currentLanguage = ref('English');
 
 provide('siteLanguage', currentLanguage);
 
+const lbl = (key) => getLabel(key, currentLanguage.value);
+const t = (item, field) => {
+  let suffixMap = {
+    'English': '',
+    'Danish': '_dk',
+    'German': '_de'
+  };
+  const suffix = suffixMap[currentLanguage.value] || '';
+  const fieldName = field + suffix;
+  return item[fieldName] || item[field] || '';
+};
 const languageMap = {
   'EN': 'English',
   'DA': 'Danish',
@@ -67,33 +71,35 @@ const setLanguage = (langCode) => {
     </div>
 
     <div class="hidden md:flex col-span-6 col-start-4 justify-between">
-      <router-link to="/media" class="navtext">Media</router-link>
-      <router-link to="/network" class="navtext">Network</router-link>
-      <router-link to="/events" class="navtext">Events</router-link>
-      <router-link to="/about" class="navtext">About</router-link>
-      
+      <router-link to="/media" class="navtext">{{lbl('nav.media')}}</router-link>
+      <router-link to="/network" class="navtext">{{lbl('nav.network')}}</router-link>
+      <router-link to="/events" class="navtext">{{lbl('nav.events')}}</router-link>
+      <router-link to="/about" class="navtext">{{lbl('nav.About')}}</router-link>
+
       <div class="relative">
         <button @click="isDropdownOpen = !isDropdownOpen" class="flex items-center navtext">
-          More <span class="ml-1 text-xs">▼</span>
+          {{lbl('nav.more')}} <span class="ml-1 text-xs">▼</span>
         </button>
         <div v-if="isDropdownOpen" class="absolute left-0 mt-4 w-48 bg-white border border-gray-100 shadow-xl rounded-md z-50">
-          <router-link to="/become-a-member" class="navdropdown">Become a member</router-link>
-          <router-link to="/border-region" class="navdropdown">Border Region</router-link>
-          <router-link to="/blog" class="navdropdown">Blog</router-link>
-          <router-link to="/photogallery" class="navdropdown">Photogallery</router-link>
-          <router-link to="/resources" class="navdropdown">Resources</router-link>
+          <router-link to="/become-a-member" class="navdropdown">{{lbl('nav.becomeamember')}}</router-link>
+          <router-link to="/border-region" class="navdropdown">{{lbl('nav.borderregion')}}</router-link>
+          <router-link to="/blog" class="navdropdown">{{lbl('nav.blog')}}</router-link>
+          <router-link to="/photogallery" class="navdropdown">{{lbl('nav.photogallery')}}</router-link>
+          <router-link to="/resources" class="navdropdown">{{lbl('nav.resources')}}</router-link>
         </div>
       </div>
     </div>
 
     <!-- Mobile search bar (always visible) -->
-    <div class="flex col-span-12 md:hidden">
-      <div class="relative flex items-center w-full">
-        <input v-model="searchQuery" type="text" placeholder="Search..."
-          class="w-full bg-transparent border-b border-black outline-none py-2 text-base"/>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 absolute right-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+    <div v-if="isMobileMenuOpen" class="flex col-span-12 md:hidden">
+      <div class="flex col-span-12">
+        <div class="relative flex items-center w-full">
+          <input v-model="searchQuery" type="text" placeholder="Search..."
+            class="w-full bg-transparent border-b border-black outline-none py-2 text-base"/>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 absolute right-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
       </div>
     </div>
 
@@ -131,17 +137,17 @@ const setLanguage = (langCode) => {
 
     <div v-if="isMobileMenuOpen" class="col-span-12 md:hidden bg-white border-t border-gray-100 py-4">
       <div class="flex flex-col gap-3">
-        <router-link to="/media" class="navtext px-4">Media</router-link>
-        <router-link to="/network" class="navtext px-4">Network</router-link>
-        <router-link to="/events" class="navtext px-4">Events</router-link>
-        <router-link to="/about" class="navtext px-4">About</router-link>
-        <button @click="isDropdownOpen = !isDropdownOpen" class="navtext px-4 text-left">More ▼</button>
+        <router-link to="/media" class="navtext px-4">{{lbl('nav.media')}}</router-link>
+        <router-link to="/network" class="navtext px-4">{{lbl('nav.network')}}</router-link>
+        <router-link to="/events" class="navtext px-4">{{lbl('nav.events')}}</router-link>
+        <router-link to="/about" class="navtext px-4">{{lbl('nav.About')}}</router-link>
+        <button @click="isDropdownOpen = !isDropdownOpen" class="navtext px-4 text-left">{{lbl('nav.more')}} ▼</button>
         <div v-if="isDropdownOpen" class="flex flex-col gap-2 px-8">
-          <router-link to="/become-a-member" class="navtext text-sm">Become a member</router-link>
-          <router-link to="/border-region" class="navtext text-sm">Border Region</router-link>
-          <router-link to="/blog" class="navtext text-sm">Blog</router-link>
-          <router-link to="/photogallery" class="navtext text-sm">Photogallery</router-link>
-          <router-link to="/resources" class="navtext text-sm">Resources</router-link>
+          <router-link to="/become-a-member" class="navtext text-sm">{{lbl('nav.becomeamember')}}</router-link>
+          <router-link to="/border-region" class="navtext text-sm">{{lbl('nav.borderregion')}}</router-link>
+          <router-link to="/blog" class="navtext text-sm">{{lbl('nav.blog')}}</router-link>
+          <router-link to="/photogallery" class="navtext text-sm">{{lbl('nav.photogallery')}}</router-link>
+          <router-link to="/resources" class="navtext text-sm">{{lbl('nav.resources')}}</router-link>
         </div>
       </div>
     </div>
@@ -150,7 +156,7 @@ const setLanguage = (langCode) => {
       <div class="flex flex-col gap-3">
         <div class="px-4 py-2">
           <p class="text-sm font-medium mb-2">
-            Language: {{ Object.keys(languageMap).find(key => languageMap[key] === currentLanguage) }}
+            {{lbl('general.language')}}: {{ Object.keys(languageMap).find(key => languageMap[key] === currentLanguage) }}
           </p>
           <button @click="setLanguage('EN')" class="block w-full text-left px-4 py-1 hover:text-blue-900">English</button>
           <button @click="setLanguage('DA')" class="block w-full text-left px-4 py-1 hover:text-blue-900">Dansk</button>
@@ -173,43 +179,43 @@ const setLanguage = (langCode) => {
 <footer class="basegrid-footer">
     
     <div class="col-span-1 md:col-span-1 lg:col-span-3 flex flex-col">
-      <h3 class="mb-3">Use the community</h3>
-      <router-link to="/blog" class="font-light w-fit">Blog</router-link>
-      <router-link to="/network" class="font-light w-fit">Network</router-link>
-      <router-link to="/events" class="font-light w-fit">Events</router-link>
-      <h3 class="mt-4 mb-3">About us</h3>
-      <router-link to="/media" class="font-light w-fit">Media</router-link>
-      <router-link to="/advisors" class="font-light w-fit">Find advisors</router-link>
-      <router-link to="/about" class="font-light w-fit">About</router-link>
+      <h3 class="mb-3">{{ lbl('footer.community') }}</h3>
+      <router-link to="/blog" class="font-light w-fit">{{ lbl('nav.blog') }}</router-link>
+      <router-link to="/network" class="font-light w-fit">{{ lbl('nav.network') }}</router-link>
+      <router-link to="/events" class="font-light w-fit">{{ lbl('nav.events') }}</router-link>
+      <h3 class="mt-4 mb-3">{{ lbl('footer.aboutus') }}</h3>
+      <router-link to="/media" class="font-light w-fit">{{ lbl('nav.media') }}</router-link>
+      <router-link to="/advisors" class="font-light w-fit">{{ lbl('nav.advisors') }}</router-link>
+      <router-link to="/about" class="font-light w-fit">{{ lbl('nav.about') }}</router-link>
     </div>
 
     <div class="hidden md:flex col-span-1 md:col-span-1 lg:col-span-2 lg:col-start-4 flex-col gap-3">
-      <h3>Sign-up for the newsletter</h3>
+      <h3>{{ lbl('general.subscribe') }}</h3>
       <input type="email" placeholder="Insert email" class="w-full bg-transparent border-2 border-white rounded-2xl px-4 py-2 text-white placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-400 text-[14px]"/>
       <button class="w-full bg-white rounded-2xl px-4 py-2 flex items-center justify-center gap-3 hover:bg-gray-100 transition-colors group">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
           </svg>
           <span class="text-semi-dark-blue font-medium text-[12px]">
-            Subscribe now
+            {{ lbl('general.subscribe') }}
           </span>
         </button>
     </div>
 
     <div class="col-span-1 md:col-span-1 lg:col-span-2 lg:col-start-7 flex flex-col">
-      <h3 class="mb-3">Opening Hours</h3>
-      <p class="mb-2 bold">Calling Hours:</p>
-      <p>{{ footerData.calling_hours_week_days }}</p>
-      <p>{{ footerData.calling_hours }}</p>
-      <p>{{ footerData.calling_hours_week_days_two }}</p>
-      <p>{{ footerData.calling_hours_two }}</p>
-      <p class="mt-2">Visiting hours: </p>
-      <p>{{ footerData.visiting_hours }}</p>
+      <h3 class="mb-3">{{ lbl('footer.openinghours') }}</h3>
+      <p class="mb-2 bold">{{ lbl('footer.callinghours') }}:</p>
+      <p>{{ t(footerData, 'calling_hours_week_days') }}</p>
+      <p>{{ t(footerData, 'calling_hours') }}</p>
+      <p>{{ t(footerData, 'calling_hours_week_days_two') }}</p>
+      <p>{{ t(footerData, 'calling_hours_two') }}</p>
+      <p class="mt-2">{{ lbl('footer.visitinghours') }}: </p>
+      <p>{{ t(footerData, 'visiting_hours') }}</p>
     </div>
 
     <div class="col-span-1 md:col-span-1 lg:col-span-3 lg:col-start-10 flex flex-col gap-4">
 
-      <h3 class="mb-3">Contact</h3>
+      <h3 class="mb-3">{{ lbl('footer.contact') }}</h3>
         <a v-if="footerData.address" 
           :href="'https://maps.google.com/?q=' + encodeURIComponent(footerData.address)" 
           target="_blank" 

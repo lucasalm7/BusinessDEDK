@@ -59,24 +59,24 @@ const t = (item, field) => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
             </span>
-            <input v-model="searchQuery" type="text" :placeholder="lbl('searchPlaceholder')" 
+            <input v-model="searchQuery" type="text" :placeholder="lbl('mediapage.searchPlaceholder')" 
             class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"/>
         </div>
 
-        <p class="text-gray-600 mb-4 text-sm font-medium">{{ lbl('filterBy') }}</p>
+        <p class="text-gray-600 mb-4 text-sm font-medium">{{ lbl('mediapage.filterBy') }}</p>
 
         <div class="flex flex-wrap gap-4 items-center">
             <!-- All Videos Button -->
             <button @click="selectedLanguage = 'All'; selectedType = 'All'; selectedTopic = 'All'"
             :class="(selectedLanguage === 'All' && selectedType === 'All' && selectedTopic === 'All') ? 'bg-slate-900 text-white' : 'bg-white border text-gray-700'"
             class="px-6 py-2 rounded-xl transition-all text-sm">
-            {{ lbl('allVideos') }}
+            {{ lbl('mediapage.allVideos') }}
             </button>
 
             <!-- Language -->
             <div class="relative">
             <button @click="toggleDropdown('lang')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-                {{ lbl('language') }} <span class="text-sm font-light">{{ selectedLanguage !== 'All' ? ': ' + selectedLanguage : '▼' }}</span>
+                {{ lbl('general.language') }} <span class="text-sm font-light">{{ selectedLanguage !== 'All' ? ': ' + selectedLanguage : '▼' }}</span>
             </button>
             <div v-if="activeDropdown === 'lang'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-40 overflow-hidden">
                 <button @click="selectedLanguage = 'All'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">All</button>
@@ -89,7 +89,7 @@ const t = (item, field) => {
             <!-- Type -->
             <div class="relative">
             <button @click="toggleDropdown('type')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-                {{ lbl('type') }} <span class="text-sm font-light">{{ selectedType !== 'All' ? ': ' + selectedType : '▼' }}</span>
+                {{ lbl('general.type') }} <span class="text-sm font-light">{{ selectedType !== 'All' ? ': ' + selectedType : '▼' }}</span>
             </button>
             <div v-if="activeDropdown === 'type'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-40 overflow-hidden">
                 <button @click="selectedType = 'All'; activeDropdown = null" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">All</button>
@@ -123,7 +123,7 @@ const t = (item, field) => {
           </p>
 
           <router-link :to="`/video/${video.id}`" class="flex items-center gap-2 text-sm font-medium text-black hover:underline">
-            {{ lbl('readMore') }} 
+            {{ lbl('general.readMore') }} 
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
@@ -132,7 +132,7 @@ const t = (item, field) => {
       </div>
       
       <div v-if="filteredVideos.length === 0" class="col-span-12 text-center py-20 text-gray-500">
-        {{ lbl('noVideos') }}
+        {{ lbl('mediapage.noVideos') }}
       </div>
       </TransitionGroup>
     </div>

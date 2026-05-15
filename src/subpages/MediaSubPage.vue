@@ -36,14 +36,14 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
 </script>
 
 <template>
-  <div v-if="loading" class="text-center py-20">{{ lbl('loading') }}</div>
+  <div v-if="loading" class="text-center py-20">{{ lbl('general.loading') }}</div>
   <div v-else-if="error" class="text-red-500 text-center py-20">{{ error }}</div>
   
   <div v-else class="min-h-screen bg-white">
     <div class="bg-semi-dark-blue py-4 px-[5%]">
       <router-link to="/media" class="text-white flex items-center gap-2 hover:opacity-80 transition-opacity">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        {{ lbl('backToMedia') }}
+        {{ lbl('general.backToMedia') }}
       </router-link>
     </div>
 
@@ -77,9 +77,9 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
 
       <!-- Right Column: Share Sidebar -->
       <div class="lg:col-span-4 border-t lg:border-t-0 pt-8 lg:pt-0">
-        <h3 class="font-bold text-black mb-4">{{ lbl('shareTitle') }}</h3>
+        <h3 class="font-bold text-black mb-4">{{ lbl('general.shareTitle') }}</h3>
         <p class="text-sm text-gray-600 mb-6 leading-relaxed">
-          {{ lbl('shareDescription') }}
+          {{ lbl('general.shareDescription') }}
         </p>
         
         <div class="flex gap-4">
