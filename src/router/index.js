@@ -13,6 +13,7 @@ import Resources from './Resources.vue'
 import MediaSubPage from '../subpages/MediaSubPage.vue'
 import NetworkSubPage from '../subpages/NetworkSubPage.vue';
 import BlogSubPage from '../subpages/BlogSubPage.vue'
+import EventSubPage from '../subpages/EventSubPage.vue'
 
 const routes = [
   {
@@ -39,6 +40,11 @@ const routes = [
     path: '/events',
     name: 'Events',
     component: Events
+  },
+  {
+    path: '/events/:slug',
+    name: 'EventSubPage',
+    component: EventSubPage
   },
   {
     path: '/advisors',

@@ -144,7 +144,7 @@ function copyLink() {
 
       <!-- Sidebar -->
       <div class="col-span-12 lg:col-span-4 lg:col-start-9 border-t lg:border-t-0 pt-8 lg:pt-0 self-start sticky top-4">
-        <div class="bg-dark-blue text-white rounded-xl p-6 flex flex-col gap-5">
+        <div class="bg-semi-dark-blue text-white rounded-xl p-6 flex flex-col gap-5">
 
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -195,7 +195,7 @@ function copyLink() {
               class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div v-else class="w-full h-44 bg-light-blue"></div>
-            <div v-if="related.acf?.event_date" class="absolute top-3 left-3 bg-white text-dark-blue px-3 py-2 text-center rounded-xl min-w-14">
+            <div v-if="related.acf?.event_date" class="absolute top-3 left-3 bg-white text-dark-blue py-2 text-center rounded-xl w-20">
               <p class="text-xl font-bold leading-none">{{ formatDay(related.acf.event_date) }}</p>
               <p class="text-xs font-bold leading-tight mt-0.5">{{ formatMonth(related.acf.event_date) }}</p>
             </div>

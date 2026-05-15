@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 
 const events = ref([]);
@@ -185,7 +185,7 @@ function toggleDropdown(name) {
             class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div v-else class="w-full h-64 bg-light-blue"></div>
-          <div v-if="event.acf?.event_date" class="absolute top-3 left-3 bg-dark-blue text-white px-3 py-2 text-center rounded-xl min-w-14">
+          <div v-if="event.acf?.event_date" class="absolute top-3 left-3 bg-semi-dark-blue text-white py-2 text-center rounded-xl w-20">
             <p class="text-2xl font-bold leading-none">{{ formatDay(event.acf.event_date) }}</p>
             <p class="text-xs font-bold leading-tight mt-0.5">{{ formatMonth(event.acf.event_date) }}</p>
           </div>
