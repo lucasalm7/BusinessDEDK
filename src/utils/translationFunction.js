@@ -1,6 +1,7 @@
 // src/utils/translationFunction.js
 
 import About from "../router/About.vue";
+import Advisors from "../router/Advisors.vue";
 import Photogallery from "../router/Photogallery.vue";
 
 /**
@@ -13,6 +14,20 @@ import Photogallery from "../router/Photogallery.vue";
 // 1. Dictionary for hardcoded UI labels
 const uiLabels = {
   English: {
+  months: {
+    jan: "January",
+    feb: "February",
+    mar: "March",
+    apr: "April",
+    may: "May",
+    jun: "June",
+    jul: "July",
+    aug: "August",
+    sep: "September",
+    oct: "October",
+    nov: "November",
+    dec: "December"
+  },
     mediapage: {
       allVideos: "All videos",
       shareTitle: "Share this video",
@@ -30,19 +45,21 @@ const uiLabels = {
       language: "Language",
       type: "Type",
       topic: "Topic",
-      subscribe: "Subscribe now"
+      subscribe: "Subscribe now",
+      seeall: "See all"
     },
     nav: {
         media: "Media",
         network: "Network",
         events: "Events",
-        About: "About",
+        about: "About",
         more: "More",
         becomeamember: "Become a member",
         borderregion: "Border Region",
         blog: "Blog",
         photogallery: "Photogallery",
-        resources: "Resources"
+        resources: "Resources",
+        advisors: "Advisors"
     },
     footer: {
         community: "Use the community",
@@ -55,9 +72,46 @@ const uiLabels = {
     },
     homepage: {
         title: "Cross-Border Business and Recruitment Between Denmark and Germany",
-    }
+        shortcutnetwork: "Become a member of the network",
+        shortcutresources: "Access our resources and find your answers",
+        shortcutborder: "Get information about the border region",
+        latestblog: "Latest blog posts",
+        viewvideo: "View video"
+    },
+    newsletter: {
+        title: "Stay up to date with business, from your inbox",
+        description: "Stay up to date on new media, local business news and upcoming events. Our newsletter gives you relevant knowledge and inspiration – without the noise.",
+        emailplaceholder: "Enter your email address",
+        subscribe: "Subscribe to newsletter",
+        success: "Subscribed!",
+        positivefdbk: "Thank you for subscribing to our newsletter! We're excited to have you on board."
+     },
+     events: {
+        upcoming: "Upcoming events",
+        loading: "Loading upcoming events...",
+        noevents: "No upcoming activities recorded currently."
+     },
+     blog: {
+        noimage: "No image provided",
+        nopreview: "No preview available",
+        loading: "Loading posts..."
+     }
   },
   Danish: {
+    months: {
+      jan: "Januar",
+      feb: "Februar",
+      mar: "Marts",
+      apr: "April",
+      may: "Maj",
+      jun: "Juni",
+      jul: "Juli",
+      aug: "August",
+      sep: "September",
+      oct: "Oktober",
+      nov: "November",
+      dec: "December"
+     },
     mediapage: {
       allVideos: "Alle videoer",
       shareTitle: "Del denne video",
@@ -75,19 +129,21 @@ const uiLabels = {
         language: "Sprog",
         type: "Type",
         topic: "Emne",
-        subscribe: "Tilmeld dig nu"
+        subscribe: "Tilmeld dig nu",
+        seeall: "Se alle"
     },
     nav: {
         media: "Medier",
         network: "Netværk",
         events: "Events",
-        About: "Om os",
+        about: "Om os",
         more: "Mere",
         becomeamember: "Bliv medlem",
         borderregion: "Grænseregionen",
         blog: "Blog",
         photogallery: "Fotogalleri",
-        resources: "Ressourcer"
+        resources: "Ressourcer",
+        advisors: "Advisors"
     },
     footer: {
         community: "Brug fællesskabet",
@@ -100,9 +156,46 @@ const uiLabels = {
     },
     homepage: {
         title: "Grænseoverskridende Erhverv og Rekruttering mellem Danmark og Tyskland",
-    }
+        shortcutnetwork: "Bliv medlem af netværket",
+        shortcutresources: "Få adgang til vores ressourcer og find dine svar",
+        shortcutborder: "Få oplysninger om grænseregionen",
+        latestblog: "Seneste blogindlæg",
+        viewvideo: "Se video"
+    },
+    newsletter: {
+        title: "Hold dig opdateret med erhvervslivet, direkte i din indbakke",
+        description: "Hold dig opdateret om nye medier, lokale erhvervsnyheder og kommende events. Vores nyhedsbrev giver dig relevant viden og inspiration – uden støj.",
+        emailplaceholder: "Indtast din e-mailadresse",
+        subscribe: "Tilmeld dig nyhedsbrevet",
+        success: "Tilmeldt!",
+        positivefdbk: "Tak for at du tilmeldte dig vores nyhedsbrev! Vi er glade for at have dig med ombord."
+     },
+        events: {
+          upcoming: "Kommende events",
+          loading: "Indlæser kommende events...",
+          noevents: "Ingen kommende aktiviteter registreret i øjeblikket."
+        },
+        blog: {
+            noimage: "Ingen billede tilgængeligt",
+            nopreview: "Ingen preview tilgængelig",
+            loading: "Indlæser indlæg..."
+        }
   },
   German: {
+    months: {
+        jan: "Januar",
+        feb: "Februar",
+        mar: "März",
+        apr: "April",
+        may: "Mai",
+        jun: "Juni",
+        jul: "Juli",
+        aug: "August",
+        sep: "September",
+        oct: "Oktober",
+        nov: "November",
+        dec: "Dezember"
+     },
     mediapage: {
       allVideos: "Alle Videos",
       shareTitle: "Dieses Video teilen",
@@ -120,19 +213,21 @@ const uiLabels = {
         language: "Sprache",
         type: "Typ",
         topic: "Thema",
-        subscribe: "Jetzt abonnieren"
+        subscribe: "Jetzt abonnieren",
+        seeall: "Alle ansehen"
     },
     nav: {
-      media: "Medien",
-      network: "Netzwerk",
-      events: "Veranstaltungen",
-      About: "Über uns",
-      more: "Mehr",
-      becomeamember: "Mitglied werden",
-      borderregion: "Grenzregion",
-      blog: "Blog",
-      photogallery: "Fotogalerie",
-      resources: "Ressourcen"
+        media: "Medien",
+        network: "Netzwerk",
+        events: "Veranstaltungen",
+        about: "Über uns",
+        more: "Mehr",
+        becomeamember: "Mitglied werden",
+        borderregion: "Grenzregion",
+        blog: "Blog",
+        photogallery: "Fotogalerie",
+        resources: "Ressourcen",
+        advisors: "Berater"
     },
     footer: {
       community: "Verwenden Sie die Community",
@@ -144,7 +239,30 @@ const uiLabels = {
       contact: "Kontakt"
     },
     homepage: {
-      title: "Grenzüberschreitendes Business und Rekrutierung zwischen Dänemark und Deutschland"
+        title: "Grenzüberschreitendes Business und Rekrutierung zwischen Dänemark und Deutschland",
+        shortcutresources: "Zugriff auf unsere Ressourcen und finden Sie Ihre Antworten",
+        shortcutnetwork: "Werden Sie Mitglied des Netzwerks",
+        shortcutborder: "Erhalten Sie Informationen über die Grenzregion",
+        latestblog: "Neueste Blogbeiträge",
+        viewvideo: "Video ansehen"
+    },
+    newsletter: {
+        title: "Bleiben Sie mit Business auf dem Laufenden, direkt in Ihrem Posteingang",
+        description: "Bleiben Sie über neue Medien, lokale Geschäftsnachrichten und bevorstehende Veranstaltungen auf dem Laufenden. Unser Newsletter bietet Ihnen relevante Kenntnisse und Inspiration – ohne das Rauschen.",
+        emailplaceholder: "Geben Sie Ihre E-Mail-Adresse ein",
+        subscribe: "Abonnieren Sie den Newsletter",
+        success: "Abonniert!",
+        positivefdbk: "Vielen Dank für Ihre Anmeldung zu unserem Newsletter! Wir freuen uns, Sie an Bord zu haben."
+    },
+    events: {
+        upcoming: "Bevorstehende Veranstaltungen",
+        loading: "Indlæser kommende events...",
+        noevents: "Ingen kommende aktiviteter registreret i øjeblikket."
+    },
+    blog: {
+        noimage: "Kein Bild verfügbar",
+        nopreview: "Kein Preview verfügbar",
+        loading: "Lädt Beiträge..."
     }
   }
 };
