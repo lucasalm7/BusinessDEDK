@@ -152,7 +152,7 @@ const setLanguage = (langCode) => {
         <router-link to="/media" class="navtext px-4">{{lbl('nav.media')}}</router-link>
         <router-link to="/network" class="navtext px-4">{{lbl('nav.network')}}</router-link>
         <router-link to="/events" class="navtext px-4">{{lbl('nav.events')}}</router-link>
-        <router-link to="/about" class="navtext px-4">{{lbl('nav.About')}}</router-link>
+        <router-link to="/about" class="navtext px-4">{{lbl('nav.about')}}</router-link>
         <button @click="isDropdownOpen = !isDropdownOpen" class="navtext px-4 text-left">{{lbl('nav.more')}} ▼</button>
         <div v-if="isDropdownOpen" class="flex flex-col gap-2 px-8">
           <router-link to="/become-a-member" class="navtext text-sm">{{lbl('nav.becomeamember')}}</router-link>

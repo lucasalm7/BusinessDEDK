@@ -101,7 +101,7 @@ const isInstitution = () => {
             <!-- Logo Box -->
       <div class="basegrid py-12">
         <div class="col-span-12">
-          <div class="bg-gray-50 border border-gray-200 rounded-lg h-80 overflow-hidden">
+          <div class="bg-gray-50 border border-gray-200 rounded-full h-100 w-100 overflow-hidden items-center justify-center flex mx-auto">
             <img :src="getLogoUrl()" :alt="card.title?.rendered || 'Company Logo'" class="w-full h-full object-cover" />
           </div>
         </div>
@@ -112,10 +112,10 @@ const isInstitution = () => {
         <div class="col-span-12">
           <h2 class="text-xl font-bold text-black mb-4" v-html="card.title?.rendered || 'Untitled'"></h2>
           
-          <div class="flex flex-wrap gap-3 mb-4">
-            <span v-if="isInstitution()" class="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-700 rounded">Institution</span>
-            <span v-else class="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-700 rounded">Company</span>
-            <span v-for="type in getCompanyTypes()" :key="type" class="text-xs font-semibold px-2 py-1 bg-gray-100 text-gray-700 rounded">
+        <div class="flex flex-wrap gap-3 mb-4">
+            <span v-if="isInstitution()" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-blue">Institution</span>
+            <span v-else class="px-3 py-1 text-xs rounded-xl border border-gray-300 bg-white text-blue">Company</span>
+            <span v-for="type in getCompanyTypes()" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">
               {{ type }}
             </span>
           </div>

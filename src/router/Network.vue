@@ -148,36 +148,36 @@ onMounted(async () => {
       <!-- Search -->
       <div class="relative max-w-sm mb-8">
         <span class="absolute inset-y-0 left-3 flex items-center">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </span>
         <input v-model="searchQuery" type="text" placeholder="Search by name, sector, location..." 
-          class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          class=" text-blue w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"/>
       </div>
 
-      <p class="text-gray-600 mb-4 text-sm font-medium">Filter by</p>
+      <p class="text-blue mb-4 text-sm font-medium">Filter by</p>
 
       <!-- Type Filters -->
       <div class="flex flex-wrap gap-4 items-center mb-6">
         <button 
           @click="activeType = 'all'"
-          :class="activeType === 'all' ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
-          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
+          :class="activeType === 'all' ? 'bg-semi-dark-blue text-white' : 'bg-white border border-gray-200 text-blue'"
+          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-semi-dark-blue hover:text-white"
         >
           All Types
         </button>
         <button 
           @click="activeType = 'companies'"
-          :class="activeType === 'companies' ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
-          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
+          :class="activeType === 'companies' ? 'bg-semi-dark-blue text-white' : 'bg-white border border-gray-200 text-blue'"
+          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-semi-dark-blue hover:text-white"
         >
           Companies
         </button>
         <button 
           @click="activeType = 'institutions'"
-          :class="activeType === 'institutions' ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
-          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
+          :class="activeType === 'institutions' ? 'bg-semi-dark-blue text-white' : 'bg-white border border-gray-200 text-blue'"
+          class="px-6 py-2 rounded-xl transition-all text-sm hover:bg-semi-dark-blue hover:text-white"
         >
           Institutions
         </button>
@@ -189,8 +189,8 @@ onMounted(async () => {
           v-for="sector in sectors"
           :key="sector"
           @click="activeSector = sector"
-          :class="activeSector === sector ? 'bg-slate-900 text-white' : 'bg-white border border-gray-200 text-gray-700'"
-          class="px-4 py-2 rounded-xl transition-all text-sm hover:bg-slate-900 hover:text-white"
+          :class="activeSector === sector ? 'bg-semi-dark-blue text-white' : 'bg-white border border-gray-200 text-blue'"
+          class="px-4 py-2 rounded-xl transition-all text-sm hover:bg-semi-dark-blue hover:text-white"
         >
           {{ sector === 'all' ? 'All Sectors' : formatLabel(sector) }}
         </button>
@@ -210,23 +210,31 @@ onMounted(async () => {
           class="flex flex-col border border-gray-200 rounded-lg p-4 bg-white cursor-pointer hover:shadow-lg hover:border-gray-300 transition-all"
         >
           <div class="flex gap-4 mb-3">
-            <div class="w-16 h-16 rounded-full border border-gray-300 shrink-0 flex items-center justify-center bg-white">
+            <div class="w-22 h-22 rounded-full border border-gray-300 shrink-0 flex items-center justify-center bg-white">
               <img :src="card.logoUrl || 'https://via.placeholder.com/80'" :alt="card.title" class="w-full h-full object-contain rounded-full" />
             </div>
             
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-bold text-black mb-1" v-html="card.title"></h3>
-              <p class="text-sm text-gray-600">{{ card.location || 'DE-DK Region' }}</p>
+            <div class="flex-1 min-w-0 items-center">
+              <h3 class="text-base font-bold text-dark-blue mb-1" v-html="card.title"></h3>
+                           <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="flex-shrink-0">
+                  <g fill="none" fill-rule="evenodd">
+                    <path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/>
+                    <path fill="#0D1B2A" d="M12 2a9 9 0 0 1 9 9c0 3.074-1.676 5.59-3.442 7.395a20.4 20.4 0 0 1-2.876 2.416l-.426.29l-.2.133l-.377.24l-.336.205l-.416.242a1.87 1.87 0 0 1-1.854 0l-.416-.242l-.52-.32l-.192-.125l-.41-.273a20.6 20.6 0 0 1-3.093-2.566C4.676 16.589 3 14.074 3 11a9 9 0 0 1 9-9m0 2a7 7 0 0 0-7 7c0 2.322 1.272 4.36 2.871 5.996a18 18 0 0 0 2.222 1.91l.458.326q.222.155.427.288l.39.25l.343.209l.289.169l.455-.269l.367-.23q.293-.186.627-.417l.458-.326a18 18 0 0 0 2.222-1.91C17.728 15.361 19 13.322 19 11a7 7 0 0 0-7-7m0 3a4 4 0 1 1 0 8a4 4 0 0 1 0-8m0 2a2 2 0 1 0 0 4a2 2 0 0 0 0-4"/>
+                  </g>
+                </svg>
+                <p class="text-sm text-gray-600">{{ card.location || 'DE-DK Region' }}</p>
+              </div>
+              <div class="flex gap-2 mt-2 flex-wrap">
+            <span v-for="type in card.companyTypeLabels" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ type }}</span>
+            <span class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-blue">{{ card.typeLabel }}</span>
+          </div>
             </div>
           </div>
-          
-          <div class="flex gap-2 flex-wrap">
-            <span v-for="type in card.companyTypeLabels" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ type }}</span>
-            <span class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ card.typeLabel }}</span>
-          </div>
+        
         </router-link>
 
-        <div v-if="filteredCards.length === 0" class="col-span-12 text-center py-20 text-gray-500">No members found.</div>
+        <div v-if="filteredCards.length === 0" class="col-span-12 text-center py-20 text-blue">No members found.</div>
       </template>
     </div>
   </div>
