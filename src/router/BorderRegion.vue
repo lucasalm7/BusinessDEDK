@@ -1,12 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref } from 'vue';
 
 const openCompany = ref(null);
 const openIndividual = ref(null);
 
-function toggle(state, index) {
-  state.value = state.value === index ? null : index;
+function toggleCompany(index) {
+  openCompany.value = openCompany.value === index ? null : index;
+}
+
+function toggleIndividual(index) {
+  openIndividual.value = openIndividual.value === index ? null : index;
 }
 
 const companyTopics = [
@@ -57,7 +60,7 @@ const individualTopics = [
       </h1>
     </div>
     <div class="col-span-12 md:col-span-9">
-      <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
+      <p class="text-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
         Practical information for companies hiring across the border and individuals considering a move.
       </p>
     </div>
@@ -83,8 +86,8 @@ const individualTopics = [
       <div class="flex flex-col gap-3 mb-12">
         <div v-for="(item, index) in companyTopics" :key="item.title">
           <button
-            @click="toggle(openCompany, index)"
-            class="w-full flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-dark-blue font-medium px-5 py-4 rounded-lg transition-colors text-left"
+            @click="toggleCompany(index)"
+            class="w-full flex items-center gap-3 bg-blue-50 hover:bg-blue-100 text-dark-blue font-medium px-5 py-4 rounded-lg transition-colors text-left"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               :class="openCompany === index ? 'rotate-180' : ''"
@@ -107,8 +110,8 @@ const individualTopics = [
       <div class="flex flex-col gap-3">
         <div v-for="(item, index) in individualTopics" :key="item.title">
           <button
-            @click="toggle(openIndividual, index)"
-            class="w-full flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-dark-blue font-medium px-5 py-4 rounded-lg transition-colors text-left"
+            @click="toggleIndividual(index)"
+            class="w-full flex items-center gap-3 bg-blue-50 hover:bg-blue-100 text-dark-blue font-medium px-5 py-4 rounded-lg transition-colors text-left"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               :class="openIndividual === index ? 'rotate-180' : ''"
