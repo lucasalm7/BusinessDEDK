@@ -33,7 +33,7 @@ const handleSubscription = async () => {
 <template>
   <section class="basegrid py-8 bg-white">
     
-    <div class="col-span-12 bg-[#1A2332] rounded-xl text-white px-6 py-12 md:py-16 text-center flex flex-col items-center justify-center">
+    <div class="col-span-12 bg-semi-dark-blue rounded-xl text-white px-6 py-12 md:py-16 text-center flex flex-col items-center justify-center">
       
       <h2 class="text-2xl md:text-3xl font-bold mb-4 tracking-tight">
         {{ lbl('newsletter.title') || 'Stay up to date with business, from your inbox' }}
@@ -61,9 +61,8 @@ const handleSubscription = async () => {
           :disabled="status === 'loading' || status === 'success'"
           class="bg-white text-[#1A2332] hover:bg-gray-100 font-semibold px-6 py-3 rounded-xl text-sm flex items-center justify-center gap-2 transition-all shrink-0 disabled:opacity-50"
         >
-          <svg class="w-4 h-4 text-[#1A2332]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 19V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7l9 6 9-6" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
           </svg>
           <span>
             {{ status === 'success' ? (lbl('newsletter.success')) : (lbl('newsletter.subscribe')) }}

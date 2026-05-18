@@ -14,20 +14,20 @@ import Photogallery from "../router/Photogallery.vue";
 // 1. Dictionary for hardcoded UI labels
 const uiLabels = {
   English: {
-  months: {
-    jan: "January",
-    feb: "February",
-    mar: "March",
-    apr: "April",
-    may: "May",
-    jun: "June",
-    jul: "July",
-    aug: "August",
-    sep: "September",
-    oct: "October",
-    nov: "November",
-    dec: "December"
-  },
+    months: {
+      jan: "January",
+      feb: "February",
+      mar: "March",
+      apr: "April",
+      may: "May",
+      jun: "June",
+      jul: "July",
+      aug: "August",
+      sep: "September",
+      oct: "October",
+      nov: "November",
+      dec: "December"
+    },
     mediapage: {
       allVideos: "All videos",
       shareTitle: "Share this video",
@@ -46,7 +46,11 @@ const uiLabels = {
       type: "Type",
       topic: "Topic",
       subscribe: "Subscribe now",
-      seeall: "See all"
+      seeall: "See all",
+      all: "All",
+      english: "English",
+      danish: "Danish",
+      german: "German"
     },
     nav: {
         media: "Media",
@@ -95,7 +99,11 @@ const uiLabels = {
         noimage: "No image provided",
         nopreview: "No preview available",
         loading: "Loading posts..."
-     }
+     },
+     taxonomy: {
+            video_interview: "Interview",
+            video_event: "Event",
+            video_story: "Story",
   },
   Danish: {
     months: {
@@ -130,7 +138,11 @@ const uiLabels = {
         type: "Type",
         topic: "Emne",
         subscribe: "Tilmeld dig nu",
-        seeall: "Se alle"
+        seeall: "Se alle",
+        all: "Alle",
+        english: "Engelsk",
+        danish: "Dansk",
+        german: "Tysk"
     },
     nav: {
         media: "Medier",
@@ -179,6 +191,11 @@ const uiLabels = {
             noimage: "Ingen billede tilgængeligt",
             nopreview: "Ingen preview tilgængelig",
             loading: "Indlæser indlæg..."
+        },
+        taxonomy: {
+            video_interview: "Interview",
+            video_event: "Event",
+            video_story: "Historie"
         }
   },
   German: {
@@ -214,7 +231,11 @@ const uiLabels = {
         type: "Typ",
         topic: "Thema",
         subscribe: "Jetzt abonnieren",
-        seeall: "Alle ansehen"
+        seeall: "Alle ansehen",
+        all: "Alle",
+        english: "Englisch",
+        danish: "Dänisch",
+        german: "Deutsch"
     },
     nav: {
         media: "Medien",
@@ -263,8 +284,14 @@ const uiLabels = {
         noimage: "Kein Bild verfügbar",
         nopreview: "Kein Preview verfügbar",
         loading: "Lädt Beiträge..."
+    },
+      taxonomy: {
+          video_interview: "Interview",
+          video_event: "Veranstaltung",
+          video_story: "Geschichte"
+        }
+     }
     }
-  }
 };
 
 export const getLabel = (keyPath, currentLang) => {
@@ -321,4 +348,5 @@ export const getTranslatedContent = (item, field, currentLang) => {
 
   return '';
 };
+
 

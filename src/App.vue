@@ -1,8 +1,11 @@
 <script setup>
-import { ref, onMounted, provide } from 'vue';
+import { ref, onMounted, provide, watch } from 'vue';
 import axios from 'axios';
 import { getTranslatedContent, getLabel } from './utils/translationFunction.js';
 
+const searchResults = ref([]);
+const isSearching = ref(false);
+let debounceTimeout = null;
 const lastScrollTop = ref(0);
 const navHidden = ref(false);
 const isDropdownOpen = ref(false);
@@ -11,6 +14,8 @@ const isLanguageDropdownOpen = ref(false);
 const isSearchOpen = ref(false);
 const searchQuery = ref('');
 const footerData = ref(null);
+const currentLanguage = ref('English');
+provide('siteLanguage', currentLanguage);
 
 onMounted(async () => {
   try {
@@ -36,9 +41,6 @@ onMounted(async () => {
     lastScrollTop.value = scrollTop <= 0 ? 0 : scrollTop;
   });
 });
-
-const currentLanguage = ref('English');
-provide('siteLanguage', currentLanguage);
 
 const lbl = (key) => getLabel(key, currentLanguage.value);
 
@@ -66,6 +68,46 @@ const setLanguage = (langCode) => {
   currentLanguage.value = languageMap[langCode];
   isLanguageDropdownOpen.value = false;
 };
+
+const handleGlobalSearch = () => {
+  clearTimeout(debounceTimeout);
+  
+  // If input is empty, reset values instantly
+  if (!searchQuery.value.trim()) {
+    searchResults.value = [];
+    return;
+  }
+
+  // Debounce API calls by 300ms to avoid slamming the server on every keystroke
+  debounceTimeout = setTimeout(async () => {
+    isSearching.value = true;
+    try {
+      // subtype=any forces WP to scan posts, pages, videos, events, etc.
+      const response = await axios.get(
+        `http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/search?search=${encodeURIComponent(searchQuery.value)}&subtype=any&per_page=6`
+      );
+      searchResults.value = response.data;
+    } catch (error) {
+      console.error("Global search request error:", error);
+    } finally {
+      isSearching.value = false;
+    }
+  }, 3000); 
+};
+
+watch(searchQuery, () => {
+  handleGlobalSearch();
+});
+
+// Helper to determine the target route based on WordPress post type
+const getSearchRoute = (item) => {
+  if (item.subtype === 'video') return `/video/${item.id}`;
+  if (item.subtype === 'event') return `/events/${item.id}`; // Adjust if using slugs
+  if (item.subtype === 'post') return `/blog/${item.id}`;
+  
+  // Default fallback for pages or other types
+  return item.url.replace('http://businessdedk.lucasalmeida.dk', '') || '/';
+};
 </script>
 
 <template>
@@ -90,42 +132,63 @@ const setLanguage = (langCode) => {
 
       <div class="relative">
         <button @click="isDropdownOpen = !isDropdownOpen" class="flex items-center navtext">
-          {{lbl('nav.more')}} <span class="ml-1 text-xs">▼</span>
+          {{lbl('nav.more')}} <span class="ml-1 text-xs">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              :class="isDropdownOpen ? 'rotate-180' : ''"
+              class="transition-transform duration-200 shrink-0">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
         </button>
         <div v-if="isDropdownOpen" class="absolute left-0 mt-4 w-48 bg-white border border-gray-100 shadow-xl rounded-md z-50">
-          <router-link to="/become-a-member" class="navdropdown">{{lbl('nav.becomeamember')}}</router-link>
-          <router-link to="/border-region" class="navdropdown">{{lbl('nav.borderregion')}}</router-link>
-          <router-link to="/blog" class="navdropdown">{{lbl('nav.blog')}}</router-link>
-          <router-link to="/photogallery" class="navdropdown">{{lbl('nav.photogallery')}}</router-link>
-          <router-link to="/resources" class="navdropdown">{{lbl('nav.resources')}}</router-link>
+          <router-link to="/become-a-member" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.becomeamember')}}</router-link>
+          <router-link to="/border-region" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.borderregion')}}</router-link>
+          <router-link to="/blog" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.blog')}}</router-link>
+          <router-link to="/photogallery" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.photogallery')}}</router-link>
+          <router-link to="/resources" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.resources')}}</router-link>
         </div>
       </div>
     </div>
 
     <!-- Mobile search bar (always visible) -->
-    <div v-if="isMobileMenuOpen" class="flex col-span-12 md:hidden">
-      <div class="flex col-span-12">
-        <div class="relative flex items-center w-full">
-          <input v-model="searchQuery" type="text" placeholder="Search..."
-            class="w-full bg-transparent border-b border-black outline-none py-2 text-base"/>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 absolute right-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+    <div v-if="isMobileMenuOpen" class="flex flex-col col-span-12 md:hidden px-4 relative">
+      <div class="relative flex items-center w-full">
+        <input v-model="searchQuery" type="text" placeholder="Search..."
+          class="w-full bg-transparent border-b border-black outline-none py-2 text-base"/>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 absolute right-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+
+      <div v-if="searchResults.length > 0 || isSearching" 
+          class="w-full bg-white border border-gray-200 shadow-xl rounded-xl mt-1 max-h-60 overflow-y-auto text-black z-50">
+        <div v-if="isSearching" class="p-3 text-xs text-gray-500">Searching...</div>
+        <div v-else class="divide-y divide-gray-100">
+          <router-link 
+            v-for="item in searchResults" 
+            :key="item.id" 
+            :to="getSearchRoute(item)"
+            @click="isMobileMenuOpen = false; searchQuery = '';"
+            class="block p-3 hover:bg-slate-50"
+          >
+            <p class="text-xs font-medium text-dark-blue line-clamp-1" v-html="item.title"></p>
+            <span class="text-[9px] uppercase font-bold text-gray-400 block mt-0.5">{{ item.subtype }}</span>
+          </router-link>
         </div>
       </div>
     </div>
 
     <!-- Desktop search bar (toggleable) -->
     <div :class="[isSearchOpen 
-              ? 'absolute inset-x-0 top-0 h-full bg-white px-4 flex items-center z-50 md:relative md:inset-auto md:bg-transparent md:p-0 md:col-span-2 md:col-start-10' 
-              : 'hidden md:flex md:col-start-11 md:col-span-1']" class="transition-all duration-300 ease-in-out">
+          ? 'absolute inset-x-0 top-0 h-full bg-white px-4 flex items-center z-50 md:relative md:inset-auto md:bg-transparent md:p-0 md:col-span-2 md:col-start-10' 
+          : 'hidden md:flex md:col-start-11 md:col-span-1']" class="transition-all duration-300 ease-in-out relative">
       <div class="relative flex items-center w-full">
         <input v-model="searchQuery" type="text" placeholder="Search..."
           class="w-full bg-transparent border-b border-black outline-none py-2 text-base md:text-sm transition-all"
           :class="isSearchOpen ? 'opacity-100' : 'opacity-0'"/>
 
         <button 
-          @click="isSearchOpen = !isSearchOpen" class="absolute right-0 p-2 hover:text-blue-900 transition-colors cursor-pointer">
+          @click="isSearchOpen = !isSearchOpen; searchQuery = '';" class="absolute right-0 p-2 hover:text-blue-900 transition-colors cursor-pointer">
           <svg v-if="isSearchOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -134,11 +197,40 @@ const setLanguage = (langCode) => {
           </svg>
         </button>
       </div>
+
+      <div v-if="isSearchOpen && (searchResults.length > 0 || isSearching)" 
+          class="absolute top-full right-0 mt-2 w-80 bg-white border border-gray-200 shadow-2xl rounded-xl z-50 max-h-96 overflow-y-auto text-black">
+        
+        <div v-if="isSearching" class="p-4 text-sm text-gray-500 flex items-center gap-2">
+          <span class="animate-pulse">Searching the platform...</span>
+        </div>
+
+        <div v-else class="divide-y divide-gray-100">
+          <router-link 
+            v-for="item in searchResults" 
+            :key="item.id" 
+            :to="getSearchRoute(item)"
+            @click="isSearchOpen = false; searchQuery = '';"
+            class="block p-4 hover:bg-slate-50 transition-colors"
+          >
+            <p class="text-sm font-semibold text-dark-blue line-clamp-1" v-html="item.title"></p>
+            <span class="inline-block mt-1 text-[10px] uppercase tracking-wider font-bold bg-slate-100 px-2 py-0.5 rounded text-gray-500">
+              {{ item.subtype }}
+            </span>
+          </router-link>
+        </div>
+      </div>
     </div>
 
     <div class="hidden md:flex col-start-12 justify-center items-center text-black relative">
       <button @click="isLanguageDropdownOpen = !isLanguageDropdownOpen" class="font-medium hover:text-blue-900 flex items-center cursor-pointer">
-        {{ Object.keys(languageMap).find(key => languageMap[key] === currentLanguage) }} <span class="ml-1 text-xs">▼</span>
+        {{ Object.keys(languageMap).find(key => languageMap[key] === currentLanguage) }} <span class="ml-1 text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            :class="isLanguageDropdownOpen ? 'rotate-180' : ''"
+            class="transition-transform duration-200 shrink-0">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
       </button>
       <div v-if="isLanguageDropdownOpen" class="absolute top-full mt-2 w-24 bg-white border border-gray-100 shadow-xl rounded-md z-50">
         <button @click="setLanguage('EN')" class="navdropdown w-full text-left">English</button>
@@ -204,8 +296,8 @@ const setLanguage = (langCode) => {
     <div class="hidden md:flex col-span-1 md:col-span-1 lg:col-span-2 lg:col-start-4 flex-col gap-3">
       <h3>{{ lbl('general.subscribe') }}</h3>
       <input type="email" placeholder="Insert email" class="w-full bg-transparent border-2 border-white rounded-2xl px-4 py-2 text-white placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-400 text-[14px]"/>
-      <button class="w-full bg-white rounded-2xl px-4 py-2 flex items-center justify-center gap-3 hover:bg-gray-100 transition-colors group">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <button class="w-full bg-white rounded-xl px-4 py-2 flex items-center justify-center gap-3 hover:bg-gray-100 transition-colors group">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
           </svg>
           <span class="text-semi-dark-blue font-medium text-[12px]">

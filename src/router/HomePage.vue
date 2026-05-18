@@ -86,19 +86,11 @@ const upcomingEvents = computed(() => {
     <!-- Hero Image -->
     <section class="relative h-[60vh] md:h-[80vh] w-full overflow-hidden flex flex-col justify-start pt-12">
   
-      <img 
-        :src="homeData.acf.hero_image.url" 
-        class="absolute inset-0 w-full h-full object-cover"
-        :alt="homeData.acf.hero_image.alt || 'Hero Background'"
-      />
-
-      <div class="absolute inset-0 bg-black/30"></div>
+      <img :src="homeData.acf.hero_image.url" class="absolute inset-0 w-full h-full object-cover" :alt="homeData.acf.hero_image.alt || 'Hero Background'"/>
 
       <div class="grid grid-cols-12 gap-4 md:gap-8 px-4 md:px-8 md:pl-[5%] md:pr-[5%] relative z-10 w-full">
         <div class="col-span-12 md:col-span-6">
-          <h1 class="text-white">
-            {{ lbl('homepage.title') }}
-          </h1>
+          <h1 class="text-white">{{ lbl('homepage.title') }}</h1>
         </div>
       </div>
 
@@ -106,7 +98,7 @@ const upcomingEvents = computed(() => {
 
 
     <!-- Network logos rolling -->
-    <section class="py-12 bg-white overflow-hidden border-b border-gray-100">
+    <section class=" bg-white overflow-hidden my-8">
 
       <div class="relative flex w-full overflow-x-hidden group">
         
@@ -126,7 +118,7 @@ const upcomingEvents = computed(() => {
     </section>
 
       <!-- Shortcuts -->
-      <section class="basegrid">
+      <section class="basegrid my-8">
         
         <div class="col-span-12 bg-semi-dark-blue rounded-xl text-white px-6 py-10 md:px-12 md:py-12">
           
@@ -181,7 +173,7 @@ const upcomingEvents = computed(() => {
       </section>
 
       <!-- Recent blog posts -->
-      <section class="basegrid py-12 bg-white">
+      <section class="basegrid bg-white my-8">
   
         <div class="col-span-12 flex justify-between items-center mb-6">
           <h2 class="text-2xl md:text-3xl font-extrabold text-black tracking-tight">
@@ -189,13 +181,13 @@ const upcomingEvents = computed(() => {
           </h2>
           <router-link 
             to="/blog" 
-            class="border border-gray-300 text-gray-700 hover:bg-slate-900 hover:text-white px-5 py-2 rounded-xl text-sm font-medium transition-all"
+            class="border border-dark-blue text-blue hover:bg-slate-900 hover:text-white px-5 py-2 rounded-xl text-sm font-medium transition-all"
           >
             {{lbl('general.seeall')}}
           </router-link>
         </div>
 
-        <div v-if="blogLoading" class="col-span-12 text-center py-10 text-gray-400 text-sm">
+        <div v-if="blogLoading" class="col-span-12 text-center py-10 text-dark-blue text-sm">
           {{lbl('blog.loading')}}
         </div>
 
@@ -205,30 +197,30 @@ const upcomingEvents = computed(() => {
             :key="post.slug" 
             class="flex flex-col group cursor-pointer"
           >
-            <router-link :to="`/blog/${post.slug}`" class="overflow-hidden rounded-xl mb-4 h-56 bg-gray-100">
+            <router-link :to="`/blog/${post.slug}`" class="overflow-hidden rounded-xl mb-4 h-56">
               <img 
                 v-if="post.blogPostFields?.image?.node?.sourceUrl"
                 :src="post.blogPostFields.image.node.sourceUrl"
                 :alt="post.title"
                 class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
               />
-              <div v-else class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+              <div v-else class="w-full h-full flex items-center justify-center text-blue">
                 {{lbl('blog.noimage')}}
               </div>
             </router-link>
 
             <div class="flex flex-col">
-              <span class="text-sm text-gray-400 font-normal mb-1">
+              <span class="text-sm text-blue font-normal mb-1">
                 {{ post.blogPostFields?.category || 'General Type' }}
               </span>
               
               <router-link :to="`/blog/${post.slug}`">
-                <h3 class="text-lg font-bold text-[#0F172A] leading-snug hover:text-blue-900 transition-colors mb-2">
+                <h3 class="text-lg font-bold text-dark-blue leading-snug hover:text-blue-900 transition-colors mb-2">
                   {{ post.title }}
                 </h3>
               </router-link>
 
-              <p class="text-gray-600 text-sm font-light leading-relaxed line-clamp-3">
+              <p class="text-blue text-sm font-light leading-relaxed line-clamp-3">
                 {{ post.blogPostFields?.subtittle }}
               </p>
             </div>
@@ -238,23 +230,23 @@ const upcomingEvents = computed(() => {
       </section>
 
       <!--Highlited video -->
-      <section class="basegrid py-8 bg-white">
+      <section class="basegrid bg-white my-8">
         <div 
           v-if="featuredVideo" 
-          class="col-span-12 bg-[#1A2332] rounded-xl overflow-hidden text-white grid grid-cols-1 md:grid-cols-12"
+          class="col-span-12 bg-semi-dark-blue rounded-xl overflow-hidden text-white grid grid-cols-1 md:grid-cols-12"
         >
           
           <div class="col-span-12 md:col-span-6 p-8 md:p-12 lg:p-16 flex flex-col justify-center items-start">
             
             <h2 v-html="t(featuredVideo, 'title')" class="text-2xl md:text-3xl font-bold tracking-tight text-white mb-4"></h2>
             
-            <p class="text-gray-300 text-sm md:text-base font-light leading-relaxed mb-8 max-w-sm">
+            <p class="text-white text-sm md:text-base font-light leading-relaxed mb-8 max-w-sm">
               {{ featuredVideo.acf?.video_short_description }}
             </p>
             
             <router-link 
               :to="`/video/${featuredVideo.id}`"
-              class="bg-white text-[#1A2332] hover:bg-gray-100 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all inline-flex items-center"
+              class="bg-white text-dark-blue hover:bg-blue hover:text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all inline-flex items-center"
             >
               {{ lbl('homepage.viewvideo') }}
             </router-link>
@@ -274,21 +266,21 @@ const upcomingEvents = computed(() => {
       </section>
 
         <!-- Upcoming events -->
-      <section class="basegrid py-12 bg-white">
+      <section class="basegrid my-8 bg-white">
         
         <div class="col-span-12 flex justify-between items-center mb-6">
-          <h2 class="text-2xl md:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+          <h2 class="text-2xl md:text-3xl font-extrabold text-dark-blue tracking-tight">
             {{lbl('events.upcoming')}}
           </h2>
           <router-link 
             to="/events" 
-            class="border border-gray-300 text-gray-700 hover:bg-slate-900 hover:text-white px-5 py-2 rounded-xl text-sm font-medium transition-all"
+            class="text-blue hover:bg-slate-900 hover:text-white px-5 py-2 rounded-xl text-sm font-medium transition-all"
           >
             {{lbl('general.seeall')}}
           </router-link>
         </div>
 
-        <div v-if="eventsLoading" class="col-span-12 text-center py-12 text-gray-400 text-sm">
+        <div v-if="eventsLoading" class="col-span-12 text-center py-12 text-blue text-sm">
           {{ lbl('events.loading') }}
         </div>
 
@@ -299,39 +291,37 @@ const upcomingEvents = computed(() => {
             :to="`/events/${event.slug}`" 
             class="flex flex-col group cursor-pointer"
           >
-            
-            <div class="relative overflow-hidden rounded-2xl mb-4 h-64 w-full bg-gray-100">
+
+            <div class="relative overflow-hidden rounded-xl mb-4">
               <img
                 v-if="event._embedded?.['wp:featuredmedia']?.[0]?.source_url"
                 :src="event._embedded['wp:featuredmedia'][0].source_url"
                 :alt="event._embedded['wp:featuredmedia'][0].alt_text || event.title?.rendered"
                 loading="lazy"
-                class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
+                class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div v-else class="w-full h-full bg-slate-100 flex items-center justify-center text-gray-400 text-sm">
-                {{lbl('blog.nopreview')}}
-              </div>
-
-              <div v-if="event.acf?.event_date" class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-slate-900 py-3 px-4 text-center rounded-2xl shadow-lg min-w-21">
-                <p class="text-3xl font-black leading-none text-[#0F172A] tracking-tight">
-                  {{ formatDay(event.acf.event_date) }}
-                </p>
-                <p class="text-xs font-bold text-slate-700 uppercase tracking-wider mt-1">
-                  {{ formatMonth(event.acf.event_date) }}
-                </p>
+              <div v-else class="w-full h-64 bg-light-blue"></div>
+              <div v-if="event.acf?.event_date" class="absolute top-3 left-3 bg-semi-dark-blue text-white py-2 text-center rounded-xl w-20">
+                <p class="text-2xl font-bold leading-none">{{ formatDay(event.acf.event_date) }}</p>
+                <p class="text-xs font-bold leading-tight mt-0.5">{{ formatMonth(event.acf.event_date) }}</p>
               </div>
             </div>
 
-            <div class="flex flex-col items-start px-1">
-              <h3 
-                v-html="event.title?.rendered" 
-                class="text-xl font-extrabold text-[#0F172A] leading-snug tracking-tight group-hover:text-blue-900 transition-colors"
-              ></h3>
+            <div class="flex flex-col items-start">
+              <span class="text-blue text-sm mb-1 font-light">{{ event.acf?.event_type?.name || 'Event' }}</span>
+              <h3 v-html="event.title?.rendered" class="mb-2"></h3>
+              <p v-if="event.acf?.event_description" class="text-blue text-sm mb-4 line-clamp-2">{{ event.acf.event_description }}</p>
+              <span class="flex items-center gap-2 text-sm font-medium text-dark-blue group-hover:underline">
+                View event details and register
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </span>
             </div>
 
           </router-link>
 
-          <div v-if="upcomingEvents.length === 0" class="col-span-12 text-center py-12 text-gray-500 text-sm">
+          <div v-if="upcomingEvents.length === 0" class="col-span-12 text-center py-12 text-blue text-sm">
             {{lbl('events.noevents')}}
           </div>
         </div>
