@@ -101,6 +101,17 @@ const translateTaxonomy = (taxObj) => {
     ? localized 
     : taxObj.name;
 };
+
+const videoTypeTranslations = {
+  'Interview': { English: 'Interview', Danish: 'Interview', German: 'Interview' },
+  'Event': { English: 'Event', Danish: 'Event', German: 'Veranstaltung' },
+  'Story': { English: 'Story', Danish: 'Historie', German: 'Geschichte' },
+};
+
+const translateVideoType = (typeName) => {
+  if (!typeName) return '';
+  return videoTypeTranslations[typeName]?.[siteLanguage.value] || typeName;
+};
 </script>
 
 <template>
@@ -150,7 +161,7 @@ const translateTaxonomy = (taxObj) => {
             <!-- Type -->
             <div class="relative">
               <button @click="toggleDropdown('type')" class="bg-white px-6 py-2 rounded-xl flex items-center gap-2 text-sm border text-dark-blue">
-                {{ lbl('general.type') }} <span v-if="selectedType !== 'All'" class="font-light">: {{ selectedType }}</span>
+                {{ lbl('general.type') }} <span v-if="selectedType !== 'All'" class="font-light">: {{ translateVideoType(selectedType) }}</span>
                 
                 <span v-if="selectedType !== 'All'" @click.stop="selectedType = 'All'" class="text-[8px] self-start mt-0.5 -ml-1 hover:text-red-400 transition-colors cursor-pointer">✕</span>
                 
@@ -172,7 +183,7 @@ const translateTaxonomy = (taxObj) => {
                   @click="selectedType = type.name; activeDropdown = null" 
                   class="w-full text-left px-4 py-2 hover:bg-semi-dark-blue hover:text-white text-sm"
                 >
-                  {{ translateTaxonomy(type) }}
+                  {{ translateVideoType(type.name) }}
                 </button>
               </div>
             </div>
@@ -190,7 +201,7 @@ const translateTaxonomy = (taxObj) => {
 
         <div class="flex flex-col items-start">
           <span class="text-blue text-sm mb-1 font-light">
-            {{ video.acf?.video_type?.name || 'Video' }}
+            {{ translateVideoType(video.acf?.video_type?.name) || 'Video' }}
           </span>
 
           <router-link :to="`/video/${slugifyTitle(video)}`">
