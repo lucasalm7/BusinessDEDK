@@ -21,6 +21,20 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+// Function to turn any title string into a clean url-slug (e.g. "Hello World!" -> "hello-world")
+const slugifyTitle = (video) => {
+  // Use the translated title if available, otherwise fallback to the default WP title object
+  const rawTitle = t(video, 'title') || video.title?.rendered || '';
+  
+  const cleanSlug = rawTitle
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Strip out punctuation characters like ?, !, /
+    .trim()
+    .replace(/\s+/g, '-');        // Turn all spaces into single hyphens
+    
+  return `${video.id}-${cleanSlug}`;
+};
 </script>
 
 <template>
@@ -33,7 +47,7 @@ onMounted(async () => {
     </div>
 
     <div class="col-span-12 md:col-span-8">
-      <p class="text-off-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
+      <p class="text-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
         {{lbl('mediapage.mediaDescription')}}
       </p>
     </div>

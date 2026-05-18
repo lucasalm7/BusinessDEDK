@@ -3,26 +3,37 @@ import { ref, onMounted, computed, inject } from 'vue';
 import { fetchVideoById, formatDate, shareOnLinkedIn, shareOnFacebook, shareOnInstagram, shareViaEmail } from '../utils/mediaFunctions.js';
 import { useRoute } from 'vue-router';
 import { getTranslatedContent, getLabel } from '../utils/translationFunction.js';
+import { fetchRecentBlogPosts } from '../utils/homeFunctions.js';
+import axios from 'axios';
 
 const route = useRoute();
 const siteLanguage = inject('siteLanguage');
 const video = ref(null);
 const loading = ref(true);
 const error = ref(null);
+const recentPosts = ref([]);
+const blogLoading = ref(true);
 
 const lbl = (key) => getLabel(key, siteLanguage.value);
 const t = (item, field) => getTranslatedContent(item, field, siteLanguage.value);
 
 onMounted(async () => {
   try {
-    // Look for 'slug' in the URL (which will actually be the ID now)
-    const videoId = route.params.slug; 
-    video.value = await fetchVideoById(videoId);
+    const slug = route.params.slug;
+    
+    // Fetch by slug using REST API
+    const res = await axios.get(`http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/video?slug=${slug}&acf_format=standard`);
+    
+    if (res.data.length === 0) throw new Error('Video not found');
+    
+    video.value = res.data[0];
+    recentPosts.value = await fetchRecentBlogPosts();
   } catch (err) {
     console.error(err);
     error.value = "Could not load video.";
   } finally {
     loading.value = false;
+    blogLoading.value = false;
   }
 });
 
@@ -43,7 +54,7 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
     <div class="bg-semi-dark-blue py-4 px-[5%]">
       <router-link to="/media" class="text-white flex items-center gap-2 hover:opacity-80 transition-opacity">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-        {{ lbl('general.backToMedia') }}
+        {{ lbl('mediapage.backToMedia') }}
       </router-link>
     </div>
 
@@ -63,23 +74,23 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
           <span class="bg-[#1a2333] text-white px-4 py-1 rounded text-sm font-medium">
             {{ video.acf?.video_type?.name || 'Video' }}
           </span>
-          <span class="text-gray-500 text-sm">
+          <span class="text-blue text-sm">
             {{ formatDate(video.date) }}
           </span>
         </div>
 
         <h1 v-html="video.title.rendered" class="text-3xl font-bold text-black mb-6"></h1>
 
-        <div v-if="video.content?.rendered" class="prose max-w-none text-gray-700 leading-relaxed">
+        <div v-if="video.content?.rendered" class="prose max-w-none text-blue leading-relaxed">
           <div v-html="video.content.rendered"></div>
         </div>
       </div>
 
       <!-- Right Column: Share Sidebar -->
       <div class="lg:col-span-4 border-t lg:border-t-0 pt-8 lg:pt-0">
-        <h3 class="font-bold text-black mb-4">{{ lbl('general.shareTitle') }}</h3>
-        <p class="text-sm text-gray-600 mb-6 leading-relaxed">
-          {{ lbl('general.shareDescription') }}
+        <h3 class="font-bold text-black mb-4">{{ lbl('mediapage.shareTitle') }}</h3>
+        <p class="text-sm text-blue mb-6 leading-relaxed">
+          {{ lbl('mediapage.shareDescription') }}
         </p>
         
         <div class="flex gap-4">
@@ -100,6 +111,62 @@ const handleShareEmail = () => shareViaEmail(videoTitle.value, shareUrl.value);
 
     </div>
   </div>
+
+  <section class="basegrid py-12 bg-white">
+  
+        <div class="col-span-12 flex justify-between items-center mb-6">
+          <h2 class="text-2xl md:text-3xl font-extrabold text-black tracking-tight">
+            {{lbl('homepage.latestblog')}}
+          </h2>
+          <router-link 
+            to="/blog" 
+            class=" text-blue hover:bg-slate-900 hover:text-white px-5 py-2 rounded-xl text-sm font-medium transition-all"
+          >
+            {{lbl('general.seeall')}}
+          </router-link>
+        </div>
+
+        <div v-if="blogLoading" class="col-span-12 text-center py-10 text-blue text-sm">
+          {{lbl('blog.loading')}}
+        </div>
+
+        <div v-else class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div 
+            v-for="post in recentPosts" 
+            :key="post.slug" 
+            class="flex flex-col group cursor-pointer"
+          >
+            <router-link :to="`/blog/${post.slug}`" class="overflow-hidden rounded-xl mb-4 h-56">
+              <img 
+                v-if="post.blogPostFields?.image?.node?.sourceUrl"
+                :src="post.blogPostFields.image.node.sourceUrl"
+                :alt="post.title"
+                class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+              />
+              <div v-else class="w-full h-full flex items-center justify-center text-blue">
+                {{lbl('blog.noimage')}}
+              </div>
+            </router-link>
+
+            <div class="flex flex-col">
+              <span class="text-sm text-blue font-normal mb-1">
+                {{ post.blogPostFields?.category || 'General Type' }}
+              </span>
+              
+              <router-link :to="`/blog/${post.slug}`">
+                <h3 class="text-lg font-bold text-[#0F172A] leading-snug hover:text-blue-900 transition-colors mb-2">
+                  {{ post.title }}
+                </h3>
+              </router-link>
+
+              <p class="text-blue text-sm font-light leading-relaxed line-clamp-3">
+                {{ post.blogPostFields?.subtittle }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </section>
 </template>
 
 <style scoped>

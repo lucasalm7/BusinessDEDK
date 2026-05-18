@@ -14,20 +14,20 @@ import Photogallery from "../router/Photogallery.vue";
 // 1. Dictionary for hardcoded UI labels
 const uiLabels = {
   English: {
-  months: {
-    jan: "January",
-    feb: "February",
-    mar: "March",
-    apr: "April",
-    may: "May",
-    jun: "June",
-    jul: "July",
-    aug: "August",
-    sep: "September",
-    oct: "October",
-    nov: "November",
-    dec: "December"
-  },
+    months: {
+      jan: "January",
+      feb: "February",
+      mar: "March",
+      apr: "April",
+      may: "May",
+      jun: "June",
+      jul: "July",
+      aug: "August",
+      sep: "September",
+      oct: "October",
+      nov: "November",
+      dec: "December"
+    },
     mediapage: {
       allVideos: "All videos",
       shareTitle: "Share this video",
@@ -52,7 +52,10 @@ const uiLabels = {
       germany: "Germany",
       businesses: "Businesses",
       freelancers: "Freelancers",
-      startups: "Startups"
+      startups: "Startups",
+      english: "English",
+      danish: "Danish",
+      german: "German"
     },
     nav: {
         media: "Media",
@@ -109,7 +112,14 @@ const uiLabels = {
         dateRange: "Date range",
         searchPlaceholder: "Search by name, topic, country..."
      }
+        loading: "Loading posts..."
+     },
+     taxonomy: {
+            video_interview: "Interview",
+            video_event: "Event",
+            video_story: "Story",
   },
+},
   Danish: {
     months: {
       jan: "Januar",
@@ -149,7 +159,10 @@ const uiLabels = {
         germany: "Tyskland",
         businesses: "Virksomheder",
         freelancers: "Freelancere",
-        startups: "Startups"
+        startups: "Startups",
+        english: "Engelsk",
+        danish: "Dansk",
+        german: "Tysk"
     },
     nav: {
         media: "Medier",
@@ -205,6 +218,12 @@ const uiLabels = {
             audience: "Målgruppe",
             dateRange: "Datointerval",
             searchPlaceholder: "Søg efter navn, emne, land...",
+            loading: "Indlæser indlæg..."
+        },
+        taxonomy: {
+            video_interview: "Interview",
+            video_event: "Event",
+            video_story: "Historie"
         }
   },
   German: {
@@ -246,7 +265,10 @@ const uiLabels = {
         germany: "Deutschland",
         businesses: "Unternehmen",
         freelancers: "Freiberufler",
-        startups: "Startups"
+        startups: "Startups",
+        english: "Englisch",
+        danish: "Dänisch",
+        german: "Deutsch"
     },
     nav: {
         media: "Medien",
@@ -305,6 +327,15 @@ const uiLabels = {
     }
   }
 };
+        loading: "Lädt Beiträge..."
+    },
+      taxonomy: {
+          video_interview: "Interview",
+          video_event: "Veranstaltung",
+          video_story: "Geschichte"
+        }
+     }
+    };
 
 export const getLabel = (keyPath, currentLang) => {
   const langData = uiLabels[currentLang] || uiLabels['English'];
@@ -360,4 +391,5 @@ export const getTranslatedContent = (item, field, currentLang) => {
 
   return '';
 };
+
 
