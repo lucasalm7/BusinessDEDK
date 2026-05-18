@@ -69,30 +69,49 @@ const setLanguage = (langCode) => {
   isLanguageDropdownOpen.value = false;
 };
 
+const staticPages = [
+  { id: 'become', title: 'Become a Member', url: '/become-a-member', subtype: 'page' },
+  { id: 'border', title: 'Border Region', url: '/border-region', subtype: 'page' },
+  { id: 'advisors', title: 'Advisors', url: '/advisors', subtype: 'page' },
+  { id: 'photogallery', title: 'Photo Gallery', url: '/photogallery', subtype: 'page' },
+  { id: 'resources', title: 'Resources', url: '/resources', subtype: 'page' },
+  { id: 'network', title: 'Network', url: '/network', subtype: 'page' },
+  { id: 'media', title: 'Media', url: '/media', subtype: 'page' },
+  { id: 'about', title: 'About', url: '/about', subtype: 'page' },
+  { id: 'events', title: 'Events', url: '/events', subtype: 'page' },
+  { id: 'blog', title: 'Blog', url: '/blog', subtype: 'page' },
+  { id: 'home', title: 'Home', url: '/', subtype: 'page' }
+];
+
 const handleGlobalSearch = () => {
   clearTimeout(debounceTimeout);
   
-  // If input is empty, reset values instantly
   if (!searchQuery.value.trim()) {
     searchResults.value = [];
     return;
   }
 
-  // Debounce API calls by 300ms to avoid slamming the server on every keystroke
   debounceTimeout = setTimeout(async () => {
     isSearching.value = true;
     try {
-      // subtype=any forces WP to scan posts, pages, videos, events, etc.
-      const response = await axios.get(
+      // Search WordPress
+      const wpResponse = await axios.get(
         `http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/search?search=${encodeURIComponent(searchQuery.value)}&subtype=any&per_page=6`
       );
-      searchResults.value = response.data;
+      
+      // Filter static pages by query
+      const staticResults = staticPages.filter(page =>
+        page.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+      );
+      
+      // Combine both, limiting to 6 total results
+      searchResults.value = [...staticResults, ...wpResponse.data].slice(0, 6);
     } catch (error) {
       console.error("Global search request error:", error);
     } finally {
       isSearching.value = false;
     }
-  }, 3000); 
+  }, 300); 
 };
 
 watch(searchQuery, () => {
