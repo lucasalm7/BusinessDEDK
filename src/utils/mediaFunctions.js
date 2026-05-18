@@ -28,14 +28,13 @@ export const fetchVideoBySlug = async (slug) => {
 
 export const fetchVideoById = async (id) => {
   try {
-    // We change 'posts' to 'video' based on your JSON data
-    const response = await axios.get(
-      `http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/video/${id}?acf_format=standard`
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Error fetching video by ID:", err);
-    throw new Error("Video not found");
+    // Replace the URL with your actual WordPress API endpoint
+    const response = await fetch(`http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/posts/${id}?acf_format=standard`);
+    if (!response.ok) throw new Error('Video not found');
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching video by ID:", error);
+    throw error;
   }
 };
 
