@@ -70,17 +70,17 @@ const setLanguage = (langCode) => {
 };
 
 const staticPages = [
-  { id: 'become', title: 'Become a Member', url: '/become-a-member', subtype: 'page' },
-  { id: 'border', title: 'Border Region', url: '/border-region', subtype: 'page' },
-  { id: 'advisors', title: 'Advisors', url: '/advisors', subtype: 'page' },
-  { id: 'photogallery', title: 'Photo Gallery', url: '/photogallery', subtype: 'page' },
-  { id: 'resources', title: 'Resources', url: '/resources', subtype: 'page' },
-  { id: 'network', title: 'Network', url: '/network', subtype: 'page' },
-  { id: 'media', title: 'Media', url: '/media', subtype: 'page' },
-  { id: 'about', title: 'About', url: '/about', subtype: 'page' },
-  { id: 'events', title: 'Events', url: '/events', subtype: 'page' },
-  { id: 'blog', title: 'Blog', url: '/blog', subtype: 'page' },
-  { id: 'home', title: 'Home', url: '/', subtype: 'page' }
+  { id: 'become', title: 'Become a Member', description: 'Join the Cross-Border Business Network Denmark & Germany', url: '/become-a-member', subtype: 'page' },
+  { id: 'border', title: 'Border Region', description: 'Practical information for companies hiring across the border and individuals considering a move.', url: '/border-region', subtype: 'page' },
+  { id: 'advisors', title: 'Advisors', description: 'Connect with experienced advisors who can help you navigate cross-border challenges and opportunities.', url: '/advisors', subtype: 'page' },
+  { id: 'photogallery', title: 'Photo Gallery', description: 'Browse photos and videos from our events, meetups, and network gatherings.', url: '/photogallery', subtype: 'page' },
+  { id: 'resources', title: 'Resources', description: 'Access a variety of resources to support your cross-border business activities.', url: '/resources', subtype: 'page' },
+  { id: 'network', title: 'Network', description: 'Connect with businesses, institutions, and experts across the DE-DK region.', url: '/network', subtype: 'page' },
+  { id: 'media', title: 'Media', description: 'Watch expert interviews, cross-border business insights, recruitment stories, and Denmark-Germany success cases.', url: '/media', subtype: 'page' },
+  { id: 'about', title: 'About', description: 'Connect with businesses, institutions, and experts across the DE-DK region.', url: '/about', subtype: 'page' },
+  { id: 'events', title: 'Events', description: 'Discover job fairs, workshops, conferences, and networking opportunities between Denmark and Germany.', url: '/events', subtype: 'page' },
+  { id: 'blog', title: 'Blog', description: 'News, analysis and insights for doing business across the Danish–German border.', url: '/blog', subtype: 'page' },
+  { id: 'home', title: 'Home', description: 'Cross-Border Business and Recruitment Between Denmark and Germany.', url: '/', subtype: 'page' }
 ];
 
 const handleGlobalSearch = () => {
@@ -100,9 +100,12 @@ const handleGlobalSearch = () => {
       );
       
       // Filter static pages by query
-      const staticResults = staticPages.filter(page =>
-        page.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-      );
+      const staticResults = staticPages.filter(page => {
+        const searchTerm = searchQuery.value.toLowerCase();
+        const title = page.title.toLowerCase();
+        const desc = page.description?.toLowerCase() || '';
+        return title.includes(searchTerm) || desc.includes(searchTerm);
+      });
       
       // Combine both, limiting to 6 total results
       searchResults.value = [...staticResults, ...wpResponse.data].slice(0, 6);

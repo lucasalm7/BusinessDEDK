@@ -105,6 +105,7 @@ const uiLabels = {
             video_event: "Event",
             video_story: "Story",
   },
+},
   Danish: {
     months: {
       jan: "Januar",
@@ -291,8 +292,7 @@ const uiLabels = {
           video_story: "Geschichte"
         }
      }
-    }
-};
+    };
 
 export const getLabel = (keyPath, currentLang) => {
   const langData = uiLabels[currentLang] || uiLabels['English'];
