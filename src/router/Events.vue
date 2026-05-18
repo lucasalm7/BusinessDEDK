@@ -82,7 +82,7 @@ function toggleDropdown(name) {
       </h1>
     </div>
     <div class="col-span-12 md:col-span-9">
-      <p class="text-gray-300 text-lg md:text-2xl lg:text-3xl font-bold leading-9">
+      <p class="text-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
         Discover job fairs, workshops, conferences, and networking opportunities between Denmark and Germany.
       </p>
     </div>
@@ -122,7 +122,13 @@ function toggleDropdown(name) {
 
         <div class="relative">
           <button @click="toggleDropdown('language')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Language <span class="font-light">{{ activeLanguage ? ': ' + activeLanguage : '▼' }}</span>
+            Language
+            <span v-if="activeLanguage" class="font-light">: {{ activeLanguage }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              :class="openDropdown === 'language' ? 'rotate-180' : ''"
+              class="transition-transform duration-200 shrink-0">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
             <span v-if="activeLanguage" @click.stop="activeLanguage = ''; allEventsActive = false" class="text-[8px] self-start mt-0.5 -ml-1 hover:text-red-400 transition-colors">✕</span>
           </button>
           <div v-if="openDropdown === 'language'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-44 overflow-hidden">
@@ -132,7 +138,13 @@ function toggleDropdown(name) {
 
         <div class="relative">
           <button @click="toggleDropdown('topic')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Topic <span class="font-light">{{ activeTopic ? ': ' + activeTopic : '▼' }}</span>
+            Topic
+            <span v-if="activeTopic" class="font-light">: {{ activeTopic }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              :class="openDropdown === 'topic' ? 'rotate-180' : ''"
+              class="transition-transform duration-200 shrink-0">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
             <span v-if="activeTopic" @click.stop="activeTopic = ''; allEventsActive = false" class="text-[8px] self-start mt-0.5 -ml-1 hover:text-red-400 transition-colors">✕</span>
           </button>
           <div v-if="openDropdown === 'topic'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-56 overflow-hidden">
@@ -142,7 +154,13 @@ function toggleDropdown(name) {
 
         <div class="relative">
           <button @click="toggleDropdown('type')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Type <span class="font-light">{{ activeType ? ': ' + activeType : '▼' }}</span>
+            Type
+            <span v-if="activeType" class="font-light">: {{ activeType }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              :class="openDropdown === 'type' ? 'rotate-180' : ''"
+              class="transition-transform duration-200 shrink-0">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
             <span v-if="activeType" @click.stop="activeType = ''; allEventsActive = false" class="text-[8px] self-start mt-0.5 -ml-1 hover:text-red-400 transition-colors">✕</span>
           </button>
           <div v-if="openDropdown === 'type'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
@@ -152,7 +170,13 @@ function toggleDropdown(name) {
 
         <div class="relative">
           <button @click="toggleDropdown('daterange')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Date range <span class="font-light">{{ fromDate || toDate ? ': set' : '▼' }}</span>
+            Date range
+            <span v-if="fromDate || toDate" class="font-light">: set</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              :class="openDropdown === 'daterange' ? 'rotate-180' : ''"
+              class="transition-transform duration-200 shrink-0">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
           </button>
           <div v-if="openDropdown === 'daterange'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-64 p-4 flex flex-col gap-3">
             <div class="flex flex-col gap-1">
