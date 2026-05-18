@@ -110,9 +110,7 @@ const uiLabels = {
         country: "Country",
         audience: "Audience",
         dateRange: "Date range",
-        searchPlaceholder: "Search by name, topic, country..."
-     }
-        loading: "Loading posts..."
+            searchPlaceholder: "Search by name, topic, country..."
      },
      taxonomy: {
             video_interview: "Interview",
@@ -327,15 +325,6 @@ const uiLabels = {
     }
   }
 };
-        loading: "Lädt Beiträge..."
-    },
-      taxonomy: {
-          video_interview: "Interview",
-          video_event: "Veranstaltung",
-          video_story: "Geschichte"
-        }
-     }
-    };
 
 export const getLabel = (keyPath, currentLang) => {
   const langData = uiLabels[currentLang] || uiLabels['English'];
