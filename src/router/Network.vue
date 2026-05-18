@@ -17,6 +17,33 @@ const error = ref(null)
 const searchQuery = ref('')
 const activeSector = ref('all')
 
+// --- DICCIONARIO ACTUALIZADO CON TUS COMPANY TYPES EXACTOS DE WORDPRESS ---
+const sectorTranslations = {
+  // Categorías que aparecen en tu captura de WordPress:
+  'Consultancy': { Danish: 'Rådgivning', German: 'Beratung' },
+  'Contruction': { Danish: 'Byggeri', German: 'Bauwesen' }, // Mapeo exacto del typo en WP
+  'Construction': { Danish: 'Byggeri', German: 'Bauwesen' }, // Mapeo por si corriges el typo en WP
+  'Energy': { Danish: 'Energi', German: 'Energie' },
+  'Finance': { Danish: 'Finans', German: 'Finanzen' },
+  'Healthcare': { Danish: 'Sundhedsvæsen', German: 'Gesundheitswesen' },
+  'Job Agency': { Danish: 'Vikarbureau', German: 'Arbeitsagentur' }, // "job-agency" se transforma a "Job Agency"
+  'Logistics': { Danish: 'Logistik', German: 'Logistik' },
+  'Manufacturing': { Danish: 'Produktion', German: 'Fertigung' },
+  'Maritime': { Danish: 'Maritim', German: 'Maritim' },
+  
+  // Categorías de tu ejemplo anterior (mantenidas por si las añades en el futuro):
+  'Tax Vat': { Danish: 'Skat & Moms', German: 'Steuer & MwSt' },
+  'Regulation Law': { Danish: 'Regulering & Lov', German: 'Regulierung & Recht' },
+  'Trade Export': { Danish: 'Handel & Eksport', German: 'Handel & Export' },
+  'Funding Grants': { Danish: 'Finansiering & Tilskud', German: 'Förderung & Zuschüsse' }
+}
+
+const translateSector = (sector) => {
+  if (!sector) return ''
+  return sectorTranslations[sector]?.[siteLanguage.value] || sector
+}
+// ---------------------------------------------------------
+
 // Diccionario reactivo local para la página de Network
 const localLabels = computed(() => {
   if (siteLanguage.value === 'Danish') {
@@ -193,7 +220,7 @@ onMounted(async () => {
           :class="activeSector === sector ? 'bg-semi-dark-blue text-white' : 'bg-white border border-gray-200 text-blue'"
           class="px-4 py-2 rounded-xl transition-all text-sm hover:bg-semi-dark-blue hover:text-white"
         >
-          {{ sector === 'all' ? localLabels.allSectors : formatLabel(sector) }}
+          {{ sector === 'all' ? localLabels.allSectors : translateSector(formatLabel(sector)) }}
         </button>
       </div>
     </div>
@@ -230,7 +257,7 @@ onMounted(async () => {
               </div>
               
               <div class="flex gap-2 mt-2 flex-wrap">
-                <span v-for="type in card.companyTypeLabels" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ type }}</span>
+                <span v-for="type in card.companyTypeLabels" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ translateSector(type) }}</span>
               </div>
             </div>
           </div>
