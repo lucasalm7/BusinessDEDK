@@ -7,7 +7,7 @@ import { getTranslatedContent, getLabel } from '../utils/translationFunction.js'
 const router = useRouter()
 const siteLanguage = inject('siteLanguage')
 
-// Helpers globales de traducción
+// GLOBAL TRANSLATION HELPERS
 const lbl = (key) => getLabel(key, siteLanguage.value)
 const t = (item, field) => getTranslatedContent(item, field, siteLanguage.value)
 
@@ -17,7 +17,7 @@ const error = ref(null)
 const searchQuery = ref('')
 const activeSector = ref('all')
 
-// --- DICCIONARIO ACTUALIZADO CON TUS COMPANY TYPES EXACTOS DE WORDPRESS ---
+// --- DICTIONARY WITH YOUR EXACT COMPANY TYPES FROM WORDPRESS ---
 const sectorTranslations = {
   // Categorías que aparecen en tu captura de WordPress:
   'Consultancy': { Danish: 'Rådgivning', German: 'Beratung' },
@@ -29,22 +29,15 @@ const sectorTranslations = {
   'Job Agency': { Danish: 'Vikarbureau', German: 'Arbeitsagentur' }, // "job-agency" se transforma a "Job Agency"
   'Logistics': { Danish: 'Logistik', German: 'Logistik' },
   'Manufacturing': { Danish: 'Produktion', German: 'Fertigung' },
-  'Maritime': { Danish: 'Maritim', German: 'Maritim' },
-  
-  // Categorías de tu ejemplo anterior (mantenidas por si las añades en el futuro):
-  'Tax Vat': { Danish: 'Skat & Moms', German: 'Steuer & MwSt' },
-  'Regulation Law': { Danish: 'Regulering & Lov', German: 'Regulierung & Recht' },
-  'Trade Export': { Danish: 'Handel & Eksport', German: 'Handel & Export' },
-  'Funding Grants': { Danish: 'Finansiering & Tilskud', German: 'Förderung & Zuschüsse' }
+  'Maritime': { Danish: 'Maritim', German: 'Maritim' }
 }
 
 const translateSector = (sector) => {
   if (!sector) return ''
   return sectorTranslations[sector]?.[siteLanguage.value] || sector
 }
-// ---------------------------------------------------------
 
-// Diccionario reactivo local para la página de Network
+// DICTIONARY WITH LOCAL LABELS FOR EACH LANGUAGE
 const localLabels = computed(() => {
   if (siteLanguage.value === 'Danish') {
     return {
@@ -118,7 +111,7 @@ const normalize = (item) => {
     companyType,
     location,
     companyTypeLabels,
-    rawItem: item // Guardamos la referencia cruda para el bypass del idioma nativo
+    rawItem: item // WE SAVE RAW ITEM FOR LATER USE IN TRANSLATION, IN CASE SOME FIELDS ARE ONLY IN THE RAW WP ITEM AND NOT IN ACF
   }
 }
 
@@ -149,7 +142,7 @@ onMounted(async () => {
     const seenKeys = new Set()
     const perPage = 50
     let page = 1
-    const cacheBuster = Date.now() // Saltamos la caché interna de red
+    const cacheBuster = Date.now() // SKIP CACHE TO AVOID 500 ERRORS WHEN PAGINATING DEEP (WP REST API BUG)
 
     while (true) {
       const res = await axios.get(`http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/databasecard?per_page=${perPage}&page=${page}&acf_format=standard&v=${cacheBuster}`)
