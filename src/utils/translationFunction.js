@@ -46,7 +46,13 @@ const uiLabels = {
       type: "Type",
       topic: "Topic",
       subscribe: "Subscribe now",
-      seeall: "See all"
+      seeall: "See all",
+      all: "All",
+      denmark: "Denmark",
+      germany: "Germany",
+      businesses: "Businesses",
+      freelancers: "Freelancers",
+      startups: "Startups"
     },
     nav: {
         media: "Media",
@@ -94,7 +100,14 @@ const uiLabels = {
      blog: {
         noimage: "No image provided",
         nopreview: "No preview available",
-        loading: "Loading posts..."
+        loading: "Loading posts...",
+        heroSubtitle: "News, analysis and insights for doing business across the Danish–German border",
+        heroTitle: "Cross-Border Business Blog",
+        allArticles: "All articles",
+        country: "Country",
+        audience: "Audience",
+        dateRange: "Date range",
+        searchPlaceholder: "Search by name, topic, country..."
      }
   },
   Danish: {
@@ -130,7 +143,13 @@ const uiLabels = {
         type: "Type",
         topic: "Emne",
         subscribe: "Tilmeld dig nu",
-        seeall: "Se alle"
+        seeall: "Se alle",
+        all: "Alle",
+        denmark: "Danmark",
+        germany: "Tyskland",
+        businesses: "Virksomheder",
+        freelancers: "Freelancere",
+        startups: "Startups"
     },
     nav: {
         media: "Medier",
@@ -178,7 +197,14 @@ const uiLabels = {
         blog: {
             noimage: "Ingen billede tilgængeligt",
             nopreview: "Ingen preview tilgængelig",
-            loading: "Indlæser indlæg..."
+            loading: "Indlæser indlæg...",
+            heroSubtitle: "Nyheder, analyser og indsigt om at drive forretning på tværs af den dansk-tyske grænse",
+            heroTitle: "Grænseoverskridende Erhvervsblog",
+            allArticles: "Alle artikler",
+            country: "Land",
+            audience: "Målgruppe",
+            dateRange: "Datointerval",
+            searchPlaceholder: "Søg efter navn, emne, land...",
         }
   },
   German: {
@@ -214,7 +240,13 @@ const uiLabels = {
         type: "Typ",
         topic: "Thema",
         subscribe: "Jetzt abonnieren",
-        seeall: "Alle ansehen"
+        seeall: "Alle ansehen",
+        all: "Alle",
+        denmark: "Dänemark",
+        germany: "Deutschland",
+        businesses: "Unternehmen",
+        freelancers: "Freiberufler",
+        startups: "Startups"
     },
     nav: {
         media: "Medien",
@@ -262,7 +294,14 @@ const uiLabels = {
     blog: {
         noimage: "Kein Bild verfügbar",
         nopreview: "Kein Preview verfügbar",
-        loading: "Lädt Beiträge..."
+        loading: "Lädt Beiträge...",
+        heroSubtitle: "Nachrichten, Analysen und Einblicke für Unternehmen über die dänisch-deutsche Grenze",
+        heroTitle: "Grenzüberschreitender Geschäftsblog",
+        allArticles: "Alle Artikel",
+        country: "Land",
+        audience: "Zielgruppe",
+        dateRange: "Datumsbereich",
+        searchPlaceholder: "Suche nach Name, Thema, Land...",
     }
   }
 };
