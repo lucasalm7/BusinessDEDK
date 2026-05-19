@@ -1,6 +1,11 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, inject } from 'vue';
 import axios from 'axios';
+import { getTranslatedContent, getLabel } from '../utils/translationFunction.js';
+
+const siteLanguage = inject('siteLanguage');
+const lbl = (key) => getLabel(key, siteLanguage.value);
+const t = (item, field) => getTranslatedContent(item, field, siteLanguage.value);
 
 const events = ref([]);
 const loading = ref(true);
@@ -20,14 +25,20 @@ const months = ['January','February','March','April','May','June','July','August
 function formatDay(d) { return d ? d.slice(6, 8) : ''; }
 function formatMonth(d) { return d ? months[parseInt(d.slice(4, 6)) - 1] : ''; }
 
+function decodeHTML(str) {
+  return str ? str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>') : '';
+}
+
 function getTerms(event, taxonomy) {
   return (event._embedded?.['wp:term'] ?? [])
     .flat()
     .filter(t => t.taxonomy === taxonomy)
-    .map(t => t.name);
+    .map(t => decodeHTML(t.name));
 }
 
 onMounted(async () => {
+  document.title = lbl('events.metaTitle');
+  document.querySelector('meta[name="description"]')?.setAttribute('content', lbl('events.metaDescription'));
   try {
     const res = await axios.get('http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/event?acf_format=standard&_embed&per_page=100');
     events.value = res.data;
@@ -39,8 +50,31 @@ onMounted(async () => {
 });
 
 const languages = ['English', 'Danish', 'German'];
-const topics = ['Recruitment', 'Relocation', 'Business Expansion', 'Networking', 'Taxation & Law', 'Trade & Export', 'Innovation & Startups'];
-const types = ['Job Fair', 'Conference', 'Workshop', 'Webinar', 'Networking Event', 'Info Session', 'Panel Discussion'];
+const topics = ['Recruitment', 'IT', 'Business expansion', 'Networking', 'Taxaxion and law', 'Trade & export', 'Innovation & startups'];
+const types = ['Job fair', 'Conference', 'Workshop', 'Webinar', 'Networking Event', 'Info session', 'Panel Discussion'];
+
+const eventTypeTranslations = {
+  'Job fair':          { Danish: 'Jobmesse',                    German: 'Jobmesse' },
+  'Conference':        { Danish: 'Konference',                  German: 'Konferenz' },
+  'Workshop':          { Danish: 'Workshop',                    German: 'Workshop' },
+  'Webinar':           { Danish: 'Webinar',                     German: 'Webinar' },
+  'Networking Event':  { Danish: 'Netværksevent',               German: 'Networking-Veranstaltung' },
+  'Info session':      { Danish: 'Infosession',                 German: 'Info-Veranstaltung' },
+  'Panel Discussion':  { Danish: 'Paneldiskussion',             German: 'Podiumsdiskussion' },
+};
+
+const eventTopicTranslations = {
+  'Recruitment':           { Danish: 'Rekruttering',            German: 'Rekrutierung' },
+  'IT':                    { Danish: 'IT',                      German: 'IT' },
+  'Business expansion':    { Danish: 'Virksomhedsudvidelse',    German: 'Unternehmensexpansion' },
+  'Networking':            { Danish: 'Netværk',                 German: 'Networking' },
+  'Taxaxion and law':      { Danish: 'Skat & Jura',             German: 'Steuern & Recht' },
+  'Trade & export':        { Danish: 'Handel & Eksport',        German: 'Handel & Export' },
+  'Innovation & startups': { Danish: 'Innovation & Startups',   German: 'Innovation & Startups' },
+};
+
+const translateType  = (val) => val ? (eventTypeTranslations[val]?.[siteLanguage.value]  || val) : '';
+const translateTopic = (val) => val ? (eventTopicTranslations[val]?.[siteLanguage.value] || val) : '';
 
 const filteredEvents = computed(() => {
   return events.value.filter(e => {
@@ -78,12 +112,12 @@ function toggleDropdown(name) {
   <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
     <div class="col-span-12">
       <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">
-        Cross-Border Business Events Denmark & Germany
+        {{ lbl('events.heroTitle') }}
       </h1>
     </div>
     <div class="col-span-12 md:col-span-9">
       <p class="text-white text-lg md:text-2xl lg:text-3xl font-bold leading-9">
-        Discover job fairs, workshops, conferences, and networking opportunities between Denmark and Germany.
+        {{ lbl('events.heroSubtitle') }}
       </p>
     </div>
   </section>
@@ -102,13 +136,13 @@ function toggleDropdown(name) {
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search by title, language, or topic..."
+          :placeholder="lbl('events.searchPlaceholder')"
           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
         />
       </div>
 
       <!-- Filters -->
-      <p class="text-gray-600 mb-4 text-sm font-medium">Filter by</p>
+      <p class="text-gray-600 mb-4 text-sm font-medium">{{ lbl('general.filterBy') }}</p>
 
       <div class="flex flex-wrap gap-4 items-center">
 
@@ -117,12 +151,12 @@ function toggleDropdown(name) {
           :class="allEventsActive ? 'bg-dark-blue text-white' : 'bg-white border text-gray-700'"
           class="px-6 py-2 rounded-xl transition-all text-sm"
         >
-          All events
+          {{ lbl('events.allEvents') }}
         </button>
 
         <div class="relative">
           <button @click="toggleDropdown('language')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Language
+            {{ lbl('general.language') }}
             <span v-if="activeLanguage" class="font-light">: {{ activeLanguage }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               :class="openDropdown === 'language' ? 'rotate-180' : ''"
@@ -138,8 +172,8 @@ function toggleDropdown(name) {
 
         <div class="relative">
           <button @click="toggleDropdown('topic')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Topic
-            <span v-if="activeTopic" class="font-light">: {{ activeTopic }}</span>
+            {{ lbl('general.topic') }}
+            <span v-if="activeTopic" class="font-light">: {{ translateTopic(activeTopic) }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               :class="openDropdown === 'topic' ? 'rotate-180' : ''"
               class="transition-transform duration-200 shrink-0">
@@ -148,14 +182,14 @@ function toggleDropdown(name) {
             <span v-if="activeTopic" @click.stop="activeTopic = ''; allEventsActive = false" class="text-[8px] self-start mt-0.5 -ml-1 hover:text-red-400 transition-colors">✕</span>
           </button>
           <div v-if="openDropdown === 'topic'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-56 overflow-hidden">
-            <button v-for="topic in topics" :key="topic" @click="activeTopic = topic; openDropdown = ''; allEventsActive = false" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">{{ topic }}</button>
+            <button v-for="topic in topics" :key="topic" @click="activeTopic = topic; openDropdown = ''; allEventsActive = false" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">{{ translateTopic(topic) }}</button>
           </div>
         </div>
 
         <div class="relative">
           <button @click="toggleDropdown('type')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Type
-            <span v-if="activeType" class="font-light">: {{ activeType }}</span>
+            {{ lbl('general.type') }}
+            <span v-if="activeType" class="font-light">: {{ translateType(activeType) }}</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               :class="openDropdown === 'type' ? 'rotate-180' : ''"
               class="transition-transform duration-200 shrink-0">
@@ -164,13 +198,13 @@ function toggleDropdown(name) {
             <span v-if="activeType" @click.stop="activeType = ''; allEventsActive = false" class="text-[8px] self-start mt-0.5 -ml-1 hover:text-red-400 transition-colors">✕</span>
           </button>
           <div v-if="openDropdown === 'type'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-48 overflow-hidden">
-            <button v-for="type in types" :key="type" @click="activeType = type; openDropdown = ''; allEventsActive = false" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">{{ type }}</button>
+            <button v-for="type in types" :key="type" @click="activeType = type; openDropdown = ''; allEventsActive = false" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">{{ translateType(type) }}</button>
           </div>
         </div>
 
         <div class="relative">
           <button @click="toggleDropdown('daterange')" class="bg-white border border-gray-200 px-6 py-2 rounded-xl flex items-center gap-2 text-sm">
-            Date range
+            {{ lbl('events.dateRange') }}
             <span v-if="fromDate || toDate" class="font-light">: set</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               :class="openDropdown === 'daterange' ? 'rotate-180' : ''"
@@ -180,21 +214,21 @@ function toggleDropdown(name) {
           </button>
           <div v-if="openDropdown === 'daterange'" class="absolute top-12 left-0 bg-white border rounded-xl shadow-lg z-50 w-64 p-4 flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <label class="text-gray-500 text-sm">From</label>
+              <label class="text-gray-500 text-sm">{{ lbl('events.from') }}</label>
               <input v-model="fromDate" type="date" @change="allEventsActive = false" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
             </div>
             <div class="flex flex-col gap-1">
-              <label class="text-gray-500 text-sm">To</label>
+              <label class="text-gray-500 text-sm">{{ lbl('events.to') }}</label>
               <input v-model="toDate" type="date" @change="allEventsActive = false" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
             </div>
-            <button v-if="fromDate || toDate" @click="fromDate = ''; toDate = ''" class="text-gray-400 text-sm text-left">Clear</button>
+            <button v-if="fromDate || toDate" @click="fromDate = ''; toDate = ''" class="text-gray-400 text-sm text-left">{{ lbl('events.clear') }}</button>
           </div>
         </div>
 
       </div>
     </div>
 
-    <div v-if="loading" class="col-span-12 text-center py-20 text-gray-500">Loading events...</div>
+    <div v-if="loading" class="col-span-12 text-center py-20 text-gray-500">{{ lbl('events.loading') }}</div>
     <div v-else-if="error" class="col-span-12 text-center py-20 text-red-500">{{ error }}</div>
 
     <div v-else class="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12">
@@ -216,11 +250,11 @@ function toggleDropdown(name) {
         </div>
 
         <div class="flex flex-col items-start">
-          <span v-if="getTerms(event, 'event_type')[0]" class="text-gray-500 text-sm mb-1 font-light">{{ getTerms(event, 'event_type')[0] }}</span>
-          <h3 v-html="event.title.rendered" class="mb-2"></h3>
-          <p v-if="event.acf?.event_description" class="text-gray-700 text-sm mb-4 line-clamp-2">{{ event.acf.event_description }}</p>
+          <span v-if="getTerms(event, 'event_type')[0]" class="text-gray-500 text-sm mb-1 font-light">{{ translateType(getTerms(event, 'event_type')[0]) }}</span>
+          <h3 class="mb-2">{{ t(event, 'title') }}</h3>
+          <p v-if="event.acf?.event_description" class="text-gray-700 text-sm mb-4 line-clamp-2">{{ t(event, 'event_description') }}</p>
           <span class="flex items-center gap-2 text-sm font-medium text-dark-blue group-hover:underline">
-            View event details and register
+            {{ lbl('events.viewDetails') }}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
@@ -230,7 +264,7 @@ function toggleDropdown(name) {
       </router-link>
 
       <div v-if="filteredEvents.length === 0" class="col-span-12 text-center py-20 text-gray-500">
-        No events found matching your criteria.
+        {{ lbl('events.noEvents') }}
       </div>
     </div>
 

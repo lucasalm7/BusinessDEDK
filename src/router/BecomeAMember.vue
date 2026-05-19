@@ -1,7 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject, watchEffect } from 'vue';
 import axios from 'axios';
 import Newsletter from '../components/Newsletter.vue';
+import { getTranslatedContent, getLabel } from '../utils/translationFunction.js';
+
+const siteLanguage = inject('siteLanguage');
+const lbl = (key) => getLabel(key, siteLanguage.value);
+const t = (item, field) => getTranslatedContent(item, field, siteLanguage.value);
+
+watchEffect(() => {
+  document.title = lbl('becomeamember.metaTitle');
+  document.querySelector('meta[name="description"]')?.setAttribute('content', lbl('becomeamember.metaDescription'));
+});
 
 const advisors = ref([]);
 const selectedAdvisor = ref(null);
@@ -28,7 +38,7 @@ function submitForm() {
   <section class="bg-semi-dark-blue grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 pb-6 md:pb-10 pt-6 md:pt-30 px-4 md:px-[5%]">
     <div class="col-span-12">
       <h1 class="text-white mb-4 md:mb-6 text-3xl md:text-5xl">
-        Join the Cross-Border Business Network Denmark & Germany
+        {{ lbl('becomeamember.heroTitle') }}
       </h1>
     </div>
   </section>
@@ -36,48 +46,42 @@ function submitForm() {
   <div class="basegrid py-12">
 
     <div class="col-span-12 lg:col-span-8">
-      <h2 class="text-dark-blue font-bold mb-4">Benefits of joining the DE-DK cross-border business network</h2>
+      <h2 class="text-dark-blue font-bold mb-4">{{ lbl('becomeamember.benefitsHeading') }}</h2>
 
-      <p class="text-gray-700 mb-4">
-        Business DE-DK is a new and ambitious initiative that aims to strengthen cross-border business between Denmark and Germany. We bring together companies, organisations and decision-makers across the border — to find solutions to common challenges and exploit the region's full potential.
-      </p>
-      <p class="text-gray-700 mb-8">
-        The border region faces challenges such as labor shortages, lack of coordination between initiatives, and invisible opportunities. Business DE-DK wants to create an overview, promote collaboration, and lift the region's business community to a new level.
-      </p>
+      <p class="text-gray-700 mb-4">{{ lbl('becomeamember.benefitsP1') }}</p>
+      <p class="text-gray-700 mb-8">{{ lbl('becomeamember.benefitsP2') }}</p>
 
-      <h3 class="text-dark-blue font-bold mb-3">We will:</h3>
+      <h3 class="text-dark-blue font-bold mb-3">{{ lbl('becomeamember.weWill') }}</h3>
       <ul class="flex flex-col gap-2 mb-8">
         <li class="flex items-start gap-2 text-gray-700">
           <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-dark-blue shrink-0"></span>
-          Obtain and share knowledge about the region's actors, initiatives and needs.
+          {{ lbl('becomeamember.bullet1') }}
         </li>
         <li class="flex items-start gap-2 text-gray-700">
           <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-dark-blue shrink-0"></span>
-          Create a platform for collaboration, knowledge sharing and networking.
+          {{ lbl('becomeamember.bullet2') }}
         </li>
         <li class="flex items-start gap-2 text-gray-700">
           <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-dark-blue shrink-0"></span>
-          Establish a Cross-border Business Network (CBN) for companies, consultants, researchers and other stakeholders.
+          {{ lbl('becomeamember.bullet3') }}
         </li>
         <li class="flex items-start gap-2 text-gray-700">
           <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-dark-blue shrink-0"></span>
-          Explore the possibility of a Cross-border Business Council consisting of influential individuals from across the region.
+          {{ lbl('becomeamember.bullet4') }}
         </li>
         <li class="flex items-start gap-2 text-gray-700">
           <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-dark-blue shrink-0"></span>
-          Attract and retain international labor through greater visibility and better collaboration.
+          {{ lbl('becomeamember.bullet5') }}
         </li>
       </ul>
 
-      <p class="text-gray-700">
-        All of this is communicated through a modern and inspiring media channel, where data, analyses and stories from the region are made available to everyone.
-      </p>
+      <p class="text-gray-700">{{ lbl('becomeamember.benefitsP3') }}</p>
     </div>
 
     <div class="col-span-12 lg:col-span-4 lg:col-start-9 border-t lg:border-t-0 pt-8 lg:pt-0 self-start sticky top-4">
       <div class="bg-semi-dark-blue text-white rounded-xl p-6 flex flex-col gap-6">
 
-        <h3 class="font-bold text-white text-center">Get guidance</h3>
+        <h3 class="font-bold text-white text-center">{{ lbl('becomeamember.getGuidance') }}</h3>
 
         <div class="grid grid-cols-2 gap-4">
           <div
@@ -104,7 +108,7 @@ function submitForm() {
           @click="showFormModal = true"
           class="w-full bg-white text-semi-dark-blue py-2.5 rounded-lg text-sm font-light hover:bg-transparent hover:text-white hover:border hover:border-white transition"
         >
-          Apply for membership
+          {{ lbl('becomeamember.applyButton') }}
         </button>
 
       </div>
@@ -119,32 +123,32 @@ function submitForm() {
       <div class="bg-white rounded-xl w-full max-w-md p-8 flex flex-col gap-5">
 
         <div class="flex items-center justify-between">
-          <h3 class="font-bold text-dark-blue">Get in touch</h3>
+          <h3 class="font-bold text-dark-blue">{{ lbl('becomeamember.modalTitle') }}</h3>
           <button @click="showFormModal = false" class="text-gray-400 hover:text-gray-600 transition text-xl leading-none">✕</button>
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm text-gray-500">Full name</label>
-          <input v-model="form.name" type="text" placeholder="Your name" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="text-sm text-gray-500">{{ lbl('becomeamember.formFullName') }}</label>
+          <input v-model="form.name" type="text" :placeholder="lbl('becomeamember.formNamePlaceholder')" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm text-gray-500">Email</label>
-          <input v-model="form.email" type="email" placeholder="your@email.com" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="text-sm text-gray-500">{{ lbl('becomeamember.formEmail') }}</label>
+          <input v-model="form.email" type="email" :placeholder="lbl('becomeamember.formEmailPlaceholder')" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm text-gray-500">Company <span class="text-gray-300">(optional)</span></label>
-          <input v-model="form.company" type="text" placeholder="Your company" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <label class="text-sm text-gray-500">{{ lbl('becomeamember.formCompany') }} <span class="text-gray-300">{{ lbl('becomeamember.formCompanyOptional') }}</span></label>
+          <input v-model="form.company" type="text" :placeholder="lbl('becomeamember.formCompanyPlaceholder')" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-sm text-gray-500">Message</label>
-          <textarea v-model="form.message" placeholder="How can we help you?" rows="4" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+          <label class="text-sm text-gray-500">{{ lbl('becomeamember.formMessage') }}</label>
+          <textarea v-model="form.message" :placeholder="lbl('becomeamember.formMessagePlaceholder')" rows="4" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
         </div>
 
         <button @click="submitForm" class="w-full bg-dark-blue text-white py-3 rounded-xl text-sm font-medium hover:opacity-80 transition">
-          Send message
+          {{ lbl('becomeamember.formSubmit') }}
         </button>
 
       </div>
@@ -173,11 +177,11 @@ function submitForm() {
           </div>
           <div>
             <p class="font-medium text-dark-blue">{{ selectedAdvisor.title?.rendered }}</p>
-            <p class="text-sm text-gray-500">{{ selectedAdvisor.acf?.guidance_title }}</p>
+            <p class="text-sm text-gray-500">{{ t(selectedAdvisor, 'guidance_title') }}</p>
           </div>
         </div>
 
-        <p class="text-gray-700 leading-relaxed">{{ selectedAdvisor.acf?.guidance_description }}</p>
+        <p class="text-gray-700 leading-relaxed">{{ t(selectedAdvisor, 'guidance_description') }}</p>
 
         <div class="flex flex-col gap-2 text-sm text-gray-600">
           <a :href="`mailto:${selectedAdvisor.acf?.guidance_email}`" class="flex items-center gap-2 hover:text-dark-blue transition-colors">

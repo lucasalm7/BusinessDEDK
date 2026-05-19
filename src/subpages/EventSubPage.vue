@@ -1,8 +1,13 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import Newsletter from '../components/Newsletter.vue';
+import { getTranslatedContent, getLabel } from '../utils/translationFunction.js';
+
+const siteLanguage = inject('siteLanguage');
+const lbl = (key) => getLabel(key, siteLanguage.value);
+const t = (item, field) => getTranslatedContent(item, field, siteLanguage.value);
 
 const route = useRoute();
 const event = ref(null);
@@ -20,20 +25,18 @@ function formatDay(d) { return d ? d.slice(6, 8) : ''; }
 function formatMonth(d) { return d ? months[parseInt(d.slice(4, 6)) - 1] : ''; }
 function formatYear(d) { return d ? d.slice(0, 4) : ''; }
 
-const whatToExpectItems = computed(() =>
-  event.value?.acf?.what_to_expect
-    ? event.value.acf.what_to_expect.split('\n').filter(l => l.trim())
-    : []
-);
+const whatToExpectItems = computed(() => {
+  const raw = event.value ? t(event.value, 'what_to_expect') : '';
+  return raw ? raw.split('\n').filter(l => l.trim()) : [];
+});
 
-const scheduleItems = computed(() =>
-  event.value?.acf?.event_schedule
-    ? event.value.acf.event_schedule.split('\n').filter(l => l.trim()).map(l => {
-        const i = l.indexOf(' ');
-        return { time: l.slice(0, i), desc: l.slice(i + 1) };
-      })
-    : []
-);
+const scheduleItems = computed(() => {
+  const raw = event.value ? t(event.value, 'event_schedule') : '';
+  return raw ? raw.split('\n').filter(l => l.trim()).map(l => {
+    const i = l.indexOf(' ');
+    return { time: l.slice(0, i), desc: l.slice(i + 1) };
+  }) : [];
+});
 
 async function loadEvent(slug) {
   loading.value = true;
@@ -45,6 +48,10 @@ async function loadEvent(slug) {
     ]);
     event.value = eventRes.data[0];
     relatedEvents.value = allRes.data.filter(e => e.slug !== slug).slice(0, 4);
+    const pageTitle = t(event.value, 'title');
+    document.title = `${pageTitle} | Business DE-DK`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content',
+      event.value.acf?.event_description?.slice(0, 155) || lbl('events.metaDescription'));
   } catch (err) {
     error.value = 'Failed to load event: ' + err.message;
   } finally {
@@ -77,7 +84,7 @@ function copyLink() {
 </script>
 
 <template>
-  <div v-if="loading" class="text-center py-20 text-gray-500">Loading event...</div>
+  <div v-if="loading" class="text-center py-20 text-gray-500">{{ lbl('events.loadingEvent') }}</div>
   <div v-else-if="error" class="text-red-500 text-center py-20">{{ error }}</div>
 
   <div v-else>
@@ -88,7 +95,7 @@ function copyLink() {
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 5l-7 7 7 7"/>
         </svg>
-        Back to events
+        {{ lbl('events.backToEvents') }}
       </router-link>
     </div>
 
@@ -96,7 +103,7 @@ function copyLink() {
     <div class="basegrid py-12">
 
       <div class="col-span-12 lg:col-span-8">
-        <h1 v-html="event.title.rendered" class="text-dark-blue mb-6"></h1>
+        <h1 class="text-dark-blue mb-6">{{ t(event, 'title') }}</h1>
 
         <div class="flex flex-wrap items-center gap-6 mb-10 text-sm text-gray-500">
           <span v-if="event.acf?.event_date" class="flex items-center gap-1.5">
@@ -114,12 +121,12 @@ function copyLink() {
         </div>
 
         <div v-if="event.acf?.event_description" class="mb-10">
-          <h2 class="text-dark-blue font-bold mb-3">About the event</h2>
-          <p class="text-gray-700 leading-relaxed">{{ event.acf.event_description }}</p>
+          <h2 class="text-dark-blue font-bold mb-3">{{ lbl('events.aboutEvent') }}</h2>
+          <p class="text-gray-700 leading-relaxed">{{ t(event, 'event_description') }}</p>
         </div>
 
         <div v-if="whatToExpectItems.length" class="mb-10">
-          <h2 class="text-dark-blue font-bold mb-4">What to expect</h2>
+          <h2 class="text-dark-blue font-bold mb-4">{{ lbl('events.whatToExpect') }}</h2>
           <ul class="flex flex-col gap-2">
             <li v-for="item in whatToExpectItems" :key="item" class="flex items-start gap-3 text-gray-700">
               <span class="text-dark-blue font-bold mt-0.5">✓</span>
@@ -129,8 +136,8 @@ function copyLink() {
         </div>
 
         <div v-if="event.acf?.schedule_intro || scheduleItems.length" class="mb-10">
-          <h2 class="text-dark-blue font-bold mb-4">Schedule</h2>
-          <p v-if="event.acf?.schedule_intro" class="text-gray-700 mb-6">{{ event.acf.schedule_intro }}</p>
+          <h2 class="text-dark-blue font-bold mb-4">{{ lbl('events.schedule') }}</h2>
+          <p v-if="event.acf?.schedule_intro" class="text-gray-700 mb-6">{{ t(event, 'schedule_intro') }}</p>
           <div class="flex flex-col gap-3">
             <div v-for="item in scheduleItems" :key="item.time" class="flex gap-6">
               <span class="font-bold text-dark-blue w-14 shrink-0">{{ item.time }}</span>
@@ -139,7 +146,7 @@ function copyLink() {
           </div>
         </div>
 
-        <p v-if="event.acf?.closing_text" class="text-gray-700 leading-relaxed">{{ event.acf.closing_text }}</p>
+        <p v-if="event.acf?.closing_text" class="text-gray-700 leading-relaxed">{{ t(event, 'closing_text') }}</p>
       </div>
 
       <!-- Sidebar -->
@@ -151,18 +158,18 @@ function copyLink() {
               <span class="bg-white text-dark-blue text-sm font-bold w-10 h-10 rounded-full flex items-center justify-center shrink-0">
                 {{ event.acf?.event_attending || '—' }}
               </span>
-              <span class="text-sm font-bold">Attending</span>
+              <span class="text-sm font-bold">{{ lbl('events.attending') }}</span>
             </div>
-            <span class="text-sm font-bold">{{ event.acf?.event_tickets_left || '—' }} Tickets left</span>
+            <span class="text-sm font-bold">{{ event.acf?.event_tickets_left || '—' }} {{ lbl('events.ticketsLeft') }}</span>
           </div>
 
           <button @click="showModal = true" class="w-full bg-white text-dark-blue py-2.5 rounded-lg text-sm font-light hover:bg-transparent hover:text-white hover:border hover:border-white transition">
-            Register
+            {{ lbl('events.register') }}
           </button>
 
           <button @click="copyLink" class="w-full py-2.5 rounded-lg text-sm font-light transition border"
             :class="copied ? 'bg-green-500 text-white border-green-500' : 'bg-white text-dark-blue border-white hover:bg-transparent hover:text-white hover:border-white'">
-            {{ copied ? 'Copied!' : 'Copy the link' }}
+            {{ copied ? lbl('events.copied') : lbl('events.copyLink') }}
           </button>
 
           <p v-if="event.acf?.event_registration_closes" class="text-center text-sm text-gray-400">
@@ -177,7 +184,7 @@ function copyLink() {
     <!-- Related Events -->
     <div v-if="relatedEvents.length" class="basegrid pb-12 border-t border-gray-200">
       <div class="col-span-12 mb-6">
-        <h2 class="text-dark-blue font-bold">Related events</h2>
+        <h2 class="text-dark-blue font-bold">{{ lbl('events.relatedEvents') }}</h2>
       </div>
       <div class="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <router-link
@@ -200,9 +207,9 @@ function copyLink() {
               <p class="text-xs font-bold leading-tight mt-0.5">{{ formatMonth(related.acf.event_date) }}</p>
             </div>
           </div>
-          <h3 v-html="related.title.rendered" class="font-bold text-dark-blue text-sm mb-2"></h3>
+          <h3 class="font-bold text-dark-blue text-sm mb-2">{{ t(related, 'title') }}</h3>
           <span class="flex items-center gap-2 text-sm font-medium text-dark-blue group-hover:underline mt-auto">
-            View event details and register
+            {{ lbl('events.viewDetails') }}
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
@@ -219,38 +226,38 @@ function copyLink() {
         <div class="bg-white rounded-xl w-full max-w-md p-8 flex flex-col gap-5">
 
           <div class="flex items-center justify-between">
-            <h3 class="font-bold text-dark-blue">Register for this event</h3>
+            <h3 class="font-bold text-dark-blue">{{ lbl('events.registerTitle') }}</h3>
             <button @click="showModal = false" class="text-gray-400 hover:text-gray-600 transition text-xl leading-none">✕</button>
           </div>
 
           <div class="flex gap-4">
             <div class="flex flex-col gap-1 flex-1">
-              <label class="text-sm text-gray-500">First name</label>
-              <input v-model="form.firstName" type="text" placeholder="First name" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label class="text-sm text-gray-500">{{ lbl('events.firstName') }}</label>
+              <input v-model="form.firstName" type="text" :placeholder="lbl('events.firstName')" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div class="flex flex-col gap-1 flex-1">
-              <label class="text-sm text-gray-500">Last name</label>
-              <input v-model="form.lastName" type="text" placeholder="Last name" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label class="text-sm text-gray-500">{{ lbl('events.lastName') }}</label>
+              <input v-model="form.lastName" type="text" :placeholder="lbl('events.lastName')" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
 
           <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-500">Email</label>
-            <input v-model="form.email" type="email" placeholder="your@email.com" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label class="text-sm text-gray-500">{{ lbl('becomeamember.formEmail') }}</label>
+            <input v-model="form.email" type="email" :placeholder="lbl('becomeamember.formEmailPlaceholder')" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-500">Phone</label>
+            <label class="text-sm text-gray-500">{{ lbl('events.phone') }}</label>
             <input v-model="form.phone" type="tel" placeholder="+45 00 00 00 00" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-500">Company <span class="text-gray-300">(optional)</span></label>
-            <input v-model="form.company" type="text" placeholder="Your company" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label class="text-sm text-gray-500">{{ lbl('becomeamember.formCompany') }} <span class="text-gray-300">{{ lbl('general.optional') }}</span></label>
+            <input v-model="form.company" type="text" :placeholder="lbl('becomeamember.formCompanyPlaceholder')" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <button @click="submitForm" class="w-full bg-dark-blue text-white py-3 rounded-xl text-sm font-medium hover:opacity-80 transition">
-            Confirm registration
+            {{ lbl('events.confirmRegistration') }}
           </button>
 
         </div>
