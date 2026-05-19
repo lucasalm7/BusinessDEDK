@@ -168,6 +168,7 @@ const getSearchRoute = (item) => {
           <router-link to="/blog" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.blog')}}</router-link>
           <router-link to="/photogallery" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.photogallery')}}</router-link>
           <router-link to="/resources" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.resources')}}</router-link>
+          <router-link to="/advisors" class="navdropdown" @click="isDropdownOpen = false">{{lbl('nav.advisors')}}</router-link>
         </div>
       </div>
     </div>
@@ -274,6 +275,7 @@ const getSearchRoute = (item) => {
           <router-link to="/blog" class="navtext text-sm">{{lbl('nav.blog')}}</router-link>
           <router-link to="/photogallery" class="navtext text-sm">{{lbl('nav.photogallery')}}</router-link>
           <router-link to="/resources" class="navtext text-sm">{{lbl('nav.resources')}}</router-link>
+          <router-link to="/advisors" class="navtext text-sm">{{lbl('nav.advisors')}}</router-link>
         </div>
       </div>
     </div>
@@ -292,17 +294,9 @@ const getSearchRoute = (item) => {
     </div>
   </nav>
 
-
-
-
-
   <router-view />
 
-
-
-
-
-<footer v-if="footerData" class="basegrid-footer">
+  <footer v-if="footerData" class="basegrid-footer">
     
     <div class="col-span-1 md:col-span-1 lg:col-span-3 flex flex-col">
       <h3 class="mb-3">{{ lbl('footer.community') }}</h3>
@@ -387,6 +381,6 @@ const getSearchRoute = (item) => {
       </div>
     </div>
 
-</footer>
+  </footer>
 
 </template>

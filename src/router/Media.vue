@@ -13,7 +13,7 @@ const loading = ref(true);
 onMounted(async () => {
   try {
     // Fetching the Custom Post Type "video"
-    const response = await axios.get('http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/video?acf_format=standard');
+    const response = await axios.get('const response = await axios.get(`http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/advisor?per_page=${perPage}&page=${page}&acf_format=standard&v=${cacheBuster}`);');
     videos.value = response.data;
   } catch (err) {
     error.value = "Failed to load data: " + err.message;

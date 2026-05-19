@@ -7,7 +7,7 @@ import { getTranslatedContent, getLabel } from '../utils/translationFunction.js'
 const router = useRouter()
 const siteLanguage = inject('siteLanguage')
 
-// Helpers globales de traducción
+// GLOBAL TRANSLATION HELPERS
 const lbl = (key) => getLabel(key, siteLanguage.value)
 const t = (item, field) => getTranslatedContent(item, field, siteLanguage.value)
 
@@ -17,7 +17,27 @@ const error = ref(null)
 const searchQuery = ref('')
 const activeSector = ref('all')
 
-// Diccionario reactivo local para la página de Network
+// --- DICTIONARY WITH YOUR EXACT COMPANY TYPES FROM WORDPRESS ---
+const sectorTranslations = {
+  // Categorías que aparecen en tu captura de WordPress:
+  'Consultancy': { Danish: 'Rådgivning', German: 'Beratung' },
+  'Contruction': { Danish: 'Byggeri', German: 'Bauwesen' }, // Mapeo exacto del typo en WP
+  'Construction': { Danish: 'Byggeri', German: 'Bauwesen' }, // Mapeo por si corriges el typo en WP
+  'Energy': { Danish: 'Energi', German: 'Energie' },
+  'Finance': { Danish: 'Finans', German: 'Finanzen' },
+  'Healthcare': { Danish: 'Sundhedsvæsen', German: 'Gesundheitswesen' },
+  'Job Agency': { Danish: 'Vikarbureau', German: 'Arbeitsagentur' }, // "job-agency" se transforma a "Job Agency"
+  'Logistics': { Danish: 'Logistik', German: 'Logistik' },
+  'Manufacturing': { Danish: 'Produktion', German: 'Fertigung' },
+  'Maritime': { Danish: 'Maritim', German: 'Maritim' }
+}
+
+const translateSector = (sector) => {
+  if (!sector) return ''
+  return sectorTranslations[sector]?.[siteLanguage.value] || sector
+}
+
+// DICTIONARY WITH LOCAL LABELS FOR EACH LANGUAGE
 const localLabels = computed(() => {
   if (siteLanguage.value === 'Danish') {
     return {
@@ -91,7 +111,7 @@ const normalize = (item) => {
     companyType,
     location,
     companyTypeLabels,
-    rawItem: item // Guardamos la referencia cruda para el bypass del idioma nativo
+    rawItem: item // WE SAVE RAW ITEM FOR LATER USE IN TRANSLATION, IN CASE SOME FIELDS ARE ONLY IN THE RAW WP ITEM AND NOT IN ACF
   }
 }
 
@@ -122,7 +142,7 @@ onMounted(async () => {
     const seenKeys = new Set()
     const perPage = 50
     let page = 1
-    const cacheBuster = Date.now() // Saltamos la caché interna de red
+    const cacheBuster = Date.now() // SKIP CACHE TO AVOID 500 ERRORS WHEN PAGINATING DEEP (WP REST API BUG)
 
     while (true) {
       const res = await axios.get(`http://businessdedk.lucasalmeida.dk/wp-json/wp/v2/databasecard?per_page=${perPage}&page=${page}&acf_format=standard&v=${cacheBuster}`)
@@ -193,7 +213,7 @@ onMounted(async () => {
           :class="activeSector === sector ? 'bg-semi-dark-blue text-white' : 'bg-white border border-gray-200 text-blue'"
           class="px-4 py-2 rounded-xl transition-all text-sm hover:bg-semi-dark-blue hover:text-white"
         >
-          {{ sector === 'all' ? localLabels.allSectors : formatLabel(sector) }}
+          {{ sector === 'all' ? localLabels.allSectors : translateSector(formatLabel(sector)) }}
         </button>
       </div>
     </div>
@@ -230,7 +250,7 @@ onMounted(async () => {
               </div>
               
               <div class="flex gap-2 mt-2 flex-wrap">
-                <span v-for="type in card.companyTypeLabels" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ type }}</span>
+                <span v-for="type in card.companyTypeLabels" :key="type" class="px-3 py-1 text-xs rounded-lg border border-gray-300 bg-white text-gray-700">{{ translateSector(type) }}</span>
               </div>
             </div>
           </div>
